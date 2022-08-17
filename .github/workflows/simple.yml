@@ -1,0 +1,13 @@
+name: Shell Commands 
+
+on: [push]
+
+
+jobs:
+  run-shell-command: 
+    runs-on: macos-latest
+    steps:
+      - name: echo string 
+        run: echo "Hello World"
+
+        
