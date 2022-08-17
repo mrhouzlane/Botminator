@@ -1,13 +1,12 @@
 name: Shell Commands 
 
-on: [push]
-
+on: pull_request
 
 jobs:
   run-shell-command: 
     runs-on: macos-latest
     steps:
       - name: echo string 
-        run: echo "Hello World"
+        run: echo "pull_request"
 
-        
+  
