@@ -3,7 +3,12 @@ This is the official repository for Chainlink Hackathon with Encode Club 2022 ðŸ
 
 ## MoodyLink 
 
-Managing [open-close] orders / computation using off-chain computation with Chainlink Keepers. 
+ Triggers automated trading strategy by :
+ 
+- Managing [open-close] orders / computation using off-chain computation with Chainlink Keepers. 
+- ...
+- ...
+- ...
 
 ## Why ?
 
