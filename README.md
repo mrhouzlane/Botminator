@@ -1,6 +1,19 @@
 This is the official repository for Chainlink Hackathon with Encode Club 2022 🎛.
 
 
+## Strategy choosen : 
+
+- Cross-exchange market making :
+
+ DDEX & Binance. 
+ 
+ Arbitrage lock 1$ profit between a : 
+ - buy at 90$ for example in Binance.
+ - sell at 91$ for example in DDEX 
+ 
+ 
+
+
 ## MoodyLink 
 
  Triggers automated trading strategy by :
