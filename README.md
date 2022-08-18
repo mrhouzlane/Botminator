@@ -11,6 +11,8 @@ This is the official repository for Chainlink Hackathon with Encode Club 2022 ðŸ
  - buy at 90$ for example in Binance.
  - sell at 91$ for example in DDEX 
  
+**In this strategy in making the profit, we should look at the fees bor been a maker in one dex and taker in another one.**
+ 
  
 
 
