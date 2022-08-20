@@ -11,7 +11,7 @@ Cross-exchange market making :
 
 ### Strategy to choose the "right" DEX : 
 
-- Based on fees. 
+- Take into account the tax(fees) in the arbitrage while setting up orders. 
 
 
 
