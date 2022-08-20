@@ -15,7 +15,19 @@ const url =
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  solidity: "0.8.7",
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.7",
+      },
+      {
+        version: "0.8.0",
+      },
+      {
+        version: "0.5.0",
+      },
+    ],
+  },
   mocha: {
     timeout: 400000, // updated for tests 
   },
