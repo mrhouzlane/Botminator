@@ -5,18 +5,25 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./safeTransfer.sol";
 import "./IUniswapV2.sol";
+import "./AggregatorV3Interface.sol";
 
 
-contract Botminator is Ownable {
+contract Botminator is Ownable, PriceConsumerV3{
 
     using SafeTransfer for IERC20;
+
+
+
+    //1. FIRST STEP : 
 
 
     ///@notice Funding the contract with X tokens to swap
     function fillContract(address tokenIn) external {
         //address tokenDAI  : 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-        uint DAI;
-        uint amountIn = 50 * 10 ** DAI;
+        uint tokenInPrice;
+        getLatestPrice(); 
+        // add oracle to get price feed 
+        uint amountIn = 5 * 10 ** tokenInPrice; // We are choosing to swap 5 tokens of token X [maybe add decimals()] !! 
         require(IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn), 'transferFrom failed.');
     }
 
