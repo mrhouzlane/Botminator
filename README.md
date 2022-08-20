@@ -12,7 +12,7 @@ Cross-exchange market making :
 ### Strategy to choose the "right" DEX : 
 
 - Take into account the tax(fees) in the arbitrage while setting up orders. 
-
+- Oracle exchange price feed choice : not necessarily the connected exchange <depends on strategy : more liquid exchange will give you more insight into the potential direction of token price> 
 
 
 ### Analysis Tools : 
