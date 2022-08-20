@@ -1,12 +1,33 @@
 This is the official repository for Chainlink Hackathon with Encode Club 2022 🎛.
 
 
-## Strategy choosen : 
+## Strategy : 
 
 Cross-exchange market making :
 
 - Less liquid market : make order 
 - More Liquid market : taker order 
+
+
+## Strategy to choose the "right" DEX : 
+
+- Based on fees. 
+
+
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
 
 
 
