@@ -20,8 +20,7 @@ contract Botminator is Ownable, PriceConsumerV3{
     ///@notice Funding the contract with X tokens to swap
     function fillContract(address tokenIn) external {
         //address tokenDAI  : 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-        uint tokenInPrice;
-        getLatestPrice(); 
+        uint tokenInPrice = uint(getLatestPrice()); 
         // add oracle to get price feed 
         uint amountIn = 5 * 10 ** tokenInPrice; // We are choosing to swap 5 tokens of token X [maybe add decimals()] !! 
         require(IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn), 'transferFrom failed.');
@@ -29,7 +28,8 @@ contract Botminator is Ownable, PriceConsumerV3{
 
 
     ///@notice swap function to call in the process 
-    function swap(address router, address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOutMin) private {
+    function swap(address router, address tokenIn, address tokenOut, uint256 numberOftokens, uint256 amountOutMin) private {
+        uint amountIn = uint(getLatestPrice()) * numberOftokens; 
 		IERC20(tokenIn).approve(router, amountIn);
 		address[] memory tokens = new address[](2);
 		tokens[0]= tokenIn;
