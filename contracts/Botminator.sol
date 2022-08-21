@@ -20,6 +20,12 @@ contract Botminator is Ownable, PriceConsumerV3{
         //address tokenDAI  : 0x6B175474E89094C44Da98b954EedeAC495271d0F;
         // add oracle to get price feed 
         uint tokenInPrice = uint(getLatestPrice()); 
+        assembly {
+            let a:= 5
+            let b:= 10
+            let decimals:= 18
+            let amountIn:= exp(mul(a,b), decimals)
+        }
         uint amountIn = 5 * 10 ** tokenInPrice; // We are choosing to swap 5 tokens of token X [maybe add decimals()] !! 
         require(IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn), 'transferFrom failed.');
     }
