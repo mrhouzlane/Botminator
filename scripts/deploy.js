@@ -8,6 +8,7 @@ async function main() {
   const moodyLink= await MoodyLink.deploy(10185);
 
   await moodyLink.deployed();
+  //this is deployed. ok 
 
   console.log("Saint Eth", moodyLink.address);
 }
