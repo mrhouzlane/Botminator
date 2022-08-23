@@ -33,9 +33,11 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     function Hedger(uint256 amountIn) private {
 
 
-        // USDT --> LINK:
+        // USDT --> LINK          -------- UNISWAP --------- 
         //Sending USDT to the vault and approving 
         uint priceFeedUSDT = uint(getLatestPrice());
+        uint PriceOracleEntry = priceFeedUSDT * amountIn;
+
         require(IERC20(USDTAddress).transferFrom(msg.sender, address(this), amountIn), 'failed');
         require(IERC20(USDTAddress).approve(router, amountIn), 'failed');
 
@@ -50,7 +52,7 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         require(amounts > 0, "Transaction aborted");
 
 
-        //Reverse Swap : LINK --> USDT 
+        //Reverse Swap : LINK --> USDT        ------ QUICKSWAP ------ 
         //Calcul of new input token based on last price of Output Token :
         uint priceFeed2 = uint(getLatestPrice());
         uint newAmountIn = amounts - ((amountIn * priceFeedUSDT)/priceFeed2);
@@ -62,11 +64,14 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         reverseTokens[0] = LINKAddress; 
         reverseTokens[1] = USDTAddress;
         uint amountOutMin2 = dex.getAmountsOut(amounts, reverseTokens)[1]; //AmountOutMin of USDT Token
-        dex.swapExactTokensForTokens(newAmountIn, amountOutMin2, reverseTokens, address(this), maxTimeToSwap)[1];
+        uint USDTExit = dex.swapExactTokensForTokens(newAmountIn, amountOutMin2, reverseTokens, address(this), maxTimeToSwap)[1];
 
         // Arbitrage or not ?
-        uint newUSDTBalance = IERC20(USDTAddress).balanceOf(address(this));
+        //uint newUSDTBalance = IERC20(USDTAddress).balanceOf(address(this));
+        uint priceFeedLast = uint(getLatestPrice());
+        uint PriceOracleExit = priceFeedLast * USDTExit; 
 
+        require(PriceOracleEntry <= PriceOracleExit, "Proof of Price Variation not valid ");
 
     }
 
