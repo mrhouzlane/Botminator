@@ -1,8 +1,6 @@
 ## BOTMINATOR 
 
-Quick info : -- botminator is a name inspired by the movie terminator --- 
-
-This is the official repository for Chainlink Hackathon with Encode Club 2022 🎛.
+🪢🪢 This is the official repository for Chainlink Hackathon with Encode Club 2022 🪢🪢
 
 ##### REMINDER -- THIS IS NOT A FLASHSWAP BUT A TRADING USE CASE WITH CHAINLINK KEEPERS -- YOU DO YOU, WE ARE NOT RESPONSIBLE FOR ANY LOSSES -- 
 
