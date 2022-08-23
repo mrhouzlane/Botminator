@@ -7,7 +7,6 @@
 ### Strategy : 
 
 Cross-exchange market making :
-
 - Less liquid market : make order 
 - More Liquid market : taker order 
 
@@ -16,6 +15,12 @@ Cross-exchange market making :
 
 - Take into account the tax(fees) in the arbitrage while setting up orders. 
 - Oracle exchange price feed choice : not necessarily the connected exchange <depends on strategy : more liquid exchange will give you more insight into the potential direction of token price> 
+
+We have choose two dexes : Uniswap & QuickSwap :
+
+The aim here is to create a bot arbitrage with swaps that can reduce the risk of having a sandwich attack to increase the profitability % with : 
+
+- Uniswap V2-Core : adding Chainlink oracle PriceFeed to get prices before / after swap with Uniswap || QuickSwap. 
 
 
 ### Analysis Tools : 
