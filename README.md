@@ -4,8 +4,7 @@ Quick info : -- botminator is a name inspired by the movie terminator ---
 
 This is the official repository for Chainlink Hackathon with Encode Club 2022 🎛.
 
-
-
+##### REMINDER -- THIS IS NOT A FLASHSWAP BUT A TRADING USE CASE WITH CHAINLINK KEEPERS -- YOU DO YOU, WE ARE NOT RESPONSIBLE FOR ANY LOSSES -- 
 
 ### Strategy : 
 
@@ -23,34 +22,14 @@ Cross-exchange market making :
 
 ### Analysis Tools : 
 
-[defipulse](https://www.defipulse.com/defi-list)
-
+[DeFiLLAMA](https://defillama.com/)
 
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
- DDEX & Binance. 
- 
- Arbitrage lock 1$ profit between a : 
- - buy at 90$ for example in Binance.
- - sell at 91$ for example in DDEX 
- 
-**In this strategy in making the profit, we should look at the fees bor been a maker in one dex and taker in another one.**
- 
- 
-
-
-## MoodyLink 
+### CHAINLINK KEEPERS 
 
  Triggers automated trading strategy by :
  
