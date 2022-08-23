@@ -4,7 +4,7 @@ const hre = require("hardhat");
 const { experimentalAddHardhatNetworkMessageTraceHook } = require("hardhat/config");
 
 
-describe("MoodyLink", function() {
+describe("Botminator", function() {
 
   let MoodyLink, moodyLinkContract, owner, addr1, addr2, addr3, addrs
   beforeEach(async function () {
@@ -14,7 +14,7 @@ describe("MoodyLink", function() {
   });
 
   describe('Deployment', function() {
-    it('Should set the right owner', async function () {
+    it('Should deploy the contracts', async function () {
       expect(await moodyLinkContract.owner()).to.equal(owner.address)
     })
   });

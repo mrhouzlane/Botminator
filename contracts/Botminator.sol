@@ -49,45 +49,4 @@ contract Botminator is Ownable, PriceConsumerV3{
     }
 
 
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-         
-
-
-
-
-
-
-
-     
-
-      
-
-
-
-
-    }
-
-
-
-
 }
