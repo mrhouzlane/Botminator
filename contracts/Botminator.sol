@@ -29,13 +29,13 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     }
 
 
-
     ///@notice getting liquidity from illiquid market and selling in liquid market 
     function Hedger(uint256 amountIn) private {
 
 
         // USDT --> LINK:
         //Sending USDT to the vault and approving 
+        uint priceFeedUSDT = uint(getLatestPrice());
         require(IERC20(USDTAddress).transferFrom(msg.sender, address(this), amountIn), 'failed');
         require(IERC20(USDTAddress).approve(router, amountIn), 'failed');
 
@@ -51,19 +51,22 @@ contract botminatorVault is Ownable, PriceConsumerV3{
 
 
         //Reverse Swap : LINK --> USDT 
-        uint priceFeedPair = uint(getLatestPrice());  // Price of LINK Token 
-        uint newAmountInDOLLAR = priceFeedPair * amounts; // Nbr of tokens of LINK * Price of LINK = $ 
-        require(IERC20(LINKAddress).transferFrom(msg.sender, address(this), newAmountInDOLLAR), 'failed');
-        require(IERC20(LINKAddress).approve(router, amounts), 'failed'); // Allowance of LINK 
+        //Calcul of new input token based on last price of Output Token :
+        uint priceFeed2 = uint(getLatestPrice());
+        uint newAmountIn = amounts - ((amountIn * priceFeedUSDT)/priceFeed2);
+
+        //DO SECOND SWAP 
+        require(IERC20(LINKAddress).transferFrom(msg.sender, address(this), newAmountIn), 'failed');
+        require(IERC20(LINKAddress).approve(router, newAmountIn), 'failed'); // Allowance of LINK 
         address[] memory reverseTokens = new address[](2);
         reverseTokens[0] = LINKAddress; 
         reverseTokens[1] = USDTAddress;
         uint amountOutMin2 = dex.getAmountsOut(amounts, reverseTokens)[1]; //AmountOutMin of USDT Token
-        dex.swapExactTokensForTokens(amounts, amountOutMin2, reverseTokens, address(this), maxTimeToSwap)[1];
+        dex.swapExactTokensForTokens(newAmountIn, amountOutMin2, reverseTokens, address(this), maxTimeToSwap)[1];
 
         // Arbitrage or not ?
         uint newUSDTBalance = IERC20(USDTAddress).balanceOf(address(this));
-        require(newUSDTBalance >= amountIn, "arbitrage inexistant");
+
 
     }
 
