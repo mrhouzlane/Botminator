@@ -5,7 +5,7 @@
 **REMINDER**  THIS IS NOT A FLASHSWAP BUT TRADING LOGIC BASED ON ORACLE PRICING -- YOU DO YOU, WE ARE NOT RESPONSIBLE FOR ANY LOSSES -- 
 
 
-#### PROPOSAL : 
+## Proof of Price Variation : PoPV
 
 This is a trading bot doing swaps in Uniswap / Quickswap basing it's profitability on difference between the Price returned by the Oracle for the ```amountIn``` and the Price returned by the Oracle for the ```amountOut```.
 
@@ -31,17 +31,6 @@ The logic is the following, we are trading USDT for LINK then LINK for USDT :
  
  --->  where [amounts - x]  is the number of LINK tokens minimum to swap to be profitable. 
  
- 
- 
- 
- 
-      
-  
- 
- 
- 
- 
- 
 
 ### Strategy : 
 
@@ -57,7 +46,7 @@ Cross-exchange market making :
 
 We have choose two dexes : Uniswap & QuickSwap :
 
-The aim here is to create a bot arbitrage with swaps that can reduce the risk of having a sandwich attack to increase the profitability % with : 
+The aim here is to create a bot arbitrage with swaps that can reduce the risk of having a sandwich attack to increase the profitability % with: 
 
 - Uniswap V2-Core : adding Chainlink oracle PriceFeed to get prices before / after swap with Uniswap || QuickSwap. 
 
