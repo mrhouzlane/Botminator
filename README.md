@@ -2,7 +2,46 @@
 
 🪢🪢 This is the official repository for Chainlink Hackathon with Encode Club 2022 🪢🪢
 
-##### REMINDER -- THIS IS NOT A FLASHSWAP BUT A TRADING USE CASE WITH CHAINLINK KEEPERS -- YOU DO YOU, WE ARE NOT RESPONSIBLE FOR ANY LOSSES -- 
+**REMINDER**  THIS IS NOT A FLASHSWAP BUT TRADING LOGIC BASED ON ORACLE PRICING -- YOU DO YOU, WE ARE NOT RESPONSIBLE FOR ANY LOSSES -- 
+
+
+#### PROPOSAL : 
+
+This is a trading bot doing swaps in Uniswap / Quickswap basing it's profitability on difference between the Price returned by the Oracle for the ```amountIn``` and the Price returned by the Oracle for the ```amountOut```.
+
+The logic is the following, we are trading USDT for LINK then LINK for USDT :
+
+- 1st swap : 
+
+        Start :    0 LINK tokens at Price of x(t)$/token  || Spending 50$ of tokens(amountIn) of USDT     [Query Price of USDT to get total spent in $]
+        
+        ---------   ---------  ---------   ---------   ---------  ---------             How many                    
+        
+        ---------   ---------  ---------   ---------   ---------  ---------             [Query Price of LINK to calculate $ we have ] 
+
+  
+         END of first swap :      y LINK tokens = amounts at Price of x(t(n+1))$/token  ||  How much dollar of y LINK tokens we have ? (priceFeed2) 
+  
+        
+ To be profitable you need to have ``` y(LINK) * priceOfLink at t(n+1) >= 50$ ``` 
+ 
+ #### For this we are using ChainlinkOracle to query prices at many times of the process : 
+ 
+ - So to be profitable you must have :  ``` amounts - x = (amountIn * priceFeed(USDT)) / (priceFeed2) ``` 
+ 
+ --->  where [amounts - x]  is the number of LINK tokens minimum to swap to be profitable. 
+ 
+ 
+ 
+ 
+ 
+      
+  
+ 
+ 
+ 
+ 
+ 
 
 ### Strategy : 
 
