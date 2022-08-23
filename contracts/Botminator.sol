@@ -38,6 +38,8 @@ contract Botminator is Ownable, PriceConsumerV3{
         uint amountOutMin = IUniswapV2Router02(router).getAmountsOut(amountIn, tokens)[1];
 		uint amounts = IUniswapV2Router02(router).swapExactTokensForTokens(amountIn, amountOutMin, tokens, address(this), maxTimeToSwap)[1];
 
+        require(amounts > 0, "Transaction aborted");
+
 
         // selling in liquid market : hedging by selling same token bought on more liquid market UNISWAP 
         // X --> Y
@@ -51,11 +53,18 @@ contract Botminator is Ownable, PriceConsumerV3{
         reverseTokens[1] = tokenIn;
         uint newAmountOutMin = IUniswapV2Router02(router).getAmountsOut(amountIn, tokens)[1];
         uint newAmounts = IUniswapV2Router02(router).swapExactTokensForTokens(newAmountIn, newAmountOutMin, reverseTokens, address(this), maxTimeToSwap)[1];
-        uint amountResult = priceFeedPair * newAmounts;
-        require((amountResult > newAmountIn) , "Loosing arbitrage");
 
+        // Result : 
+        require(newAmounts > 0, "Transaction aborted");
 
     }
+
+
+    function checkHedgingResult(uint input, uint output) private pure returns (bool){
+        return output >= input ;
+    }
+
+
 
 
 }
