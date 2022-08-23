@@ -11,7 +11,7 @@ contract PriceConsumerV3 {
     AggregatorV3Interface internal priceFeed;
 
     /**
-     * Network: Goerli
+     * Network: Polygon
      * Aggregator: LINK/MATIC
      * Address: 0x12162c3E810393dEC01362aBf156D7ecf6159528
      */
