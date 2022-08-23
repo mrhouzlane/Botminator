@@ -12,11 +12,11 @@ contract PriceConsumerV3 {
 
     /**
      * Network: Goerli
-     * Aggregator: ETH/USD
-     * Address: 0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e
+     * Aggregator: LINK/MATIC
+     * Address: 0x12162c3E810393dEC01362aBf156D7ecf6159528
      */
     constructor() {
-        priceFeed = AggregatorV3Interface(0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e);
+        priceFeed = AggregatorV3Interface(0x12162c3E810393dEC01362aBf156D7ecf6159528);
     }
 
     /**

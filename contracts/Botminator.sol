@@ -7,66 +7,85 @@ import "./safeTransfer.sol";
 import "./IUniswapV2.sol";
 import "./AggregatorV3Interface.sol";
 
-
+//@notice  Botminator is a vault that will HedgeRisk on UniSwap/QuickSwap
 contract Botminator is Ownable, PriceConsumerV3{
 
     using SafeTransfer for IERC20;
 
-    //1. FIRST STEP : 
+    address router= 0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff; // on Polygon for Uniswap and Quickswap
 
 
-    ///@notice Funding the contract with X tokens to swap
-    function fillContract(address tokenIn) external {
-        //address tokenDAI  : 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-        // add oracle to get price feed 
-        uint tokenInPrice = uint(getLatestPrice()); 
-        assembly {
-            let a:= 5
-            let b:= 10
-            let decimals:= 18
-            let amountIn:= exp(mul(a,b), decimals)
-        }
-        uint amountIn = 5 * 10 ** tokenInPrice; // We are choosing to swap 5 tokens of token X [maybe add decimals()] !! 
-        require(IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn), 'transferFrom failed.');
-    }
+    ///@notice getting liquidity from illiquid market and selling in liquid market 
+    function HedgingRisk(address tokenIn, address tokenOut, uint256 numberOftokens, uint256 amountOutMin, uint256 newAmountOutMin) private {
 
 
-    ///@notice swap function to call in the process 
-    function swap(address router, address tokenIn, address tokenOut, uint256 numberOftokens, uint256 amountOutMin) private {
-        uint amountIn = uint(getLatestPrice()) * numberOftokens; 
-		IERC20(tokenIn).approve(router, amountIn);
+        // getting liquidity from illiquid market : swapping USD for token of your choice on QuickSwap 
+        // USDC --> AAVE
+        uint amountIn = numberOftokens * 10 ** 18; 
+        require(IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn), 'failed');
+        require(IERC20(tokenIn).approve(router, amountIn), 'failed'); //gives the router allowance on amountIn on the input token.
 		address[] memory tokens = new address[](2);
-		tokens[0]= tokenIn;
+		tokens[0] = tokenIn;
 		tokens[1] = tokenOut;
-		uint  maxtimeToSwap = block.timestamp + 300;
-		IUniswapV2Router02(router).swapExactTokensForTokens(amountIn, amountOutMin, tokens, address(this), maxtimeToSwap);
-	}
-
-    function CanTradeIn() public view returns (bool) {}
+		uint maxTimeToSwap = block.timestamp + 300;
+		uint[] memory amounts = IUniswapV2Router02(router).swapExactTokensForTokens(amountIn, amountOutMin, tokens, address(this), maxTimeToSwap);
 
 
-    ///@notice trade function to buy in a dex(router 1 || 2 ... ) and sell in another dex (router 2 || 3 || 4 ...)
-    function trade(address _router1, address _router2, address _token1, address _token2, uint256 amountIn, uint256 amountOutMin) external onlyOwner {
-        uint startBalance = IERC20(_token1).balanceOf(address(this));
-        uint token2InitialBalance = IERC20(_token2).balanceOf(address(this));
-        swap(_router1,_token1, _token2, amountIn, amountOutMin);
+        // selling in liquid market : hedging by selling same token bought on more liquid market UNISWAP 
+        // AAVE --> USDC 
 
+        uint priceFeedPair = uint(getLatestPrice());  //using chainlink oracle to query to price as time t 
+        uint newAmountIn = priceFeedPair * amounts[0];
+        require(IERC20(tokenOut).transferFrom(msg.sender, address(this), newAmountIn), 'failed');
+        require(IERC20(tokenIn).approve(router, newAmountIn), 'failed'); //gives the router allowance on amountOut on the NEW input token.
+        address[] memory reverseTokens = new address[](2);
+        reverseTokens[0] = tokenOut; 
+        reverseTokens[1] = tokenIn;
+        uint[] memory newAmounts = IUniswapV2Router02(router).swapExactTokensForTokens(newAmountIn, newAmountOutMin, reverseTokens, address(this), maxTimeToSwap);
+        uint amountResult = priceFeedPair * newAmounts[0];
+        require((amountResult > newAmountIn) , "Loosing arbitrage");
 
-        // buy in one router 
-
-
-
-
-
-
-
-
-        // sell in another router 
 
     }
 
 
-// ----------- SECURITY MEASURE TO PROTECT AGAINST SANDWICH ATTACKS : PRICE ORACLE WITH CHAINLINK -----------------------
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         
+
+
+
+
+
+
+
+     
+
+      
+
+
+
+
+    }
 
 
 
