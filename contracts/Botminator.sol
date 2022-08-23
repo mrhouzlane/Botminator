@@ -21,7 +21,7 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         dex = IUniswapV2Router02(_router);
     }
     
-    address router= 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D; // on Polygon for Uniswap and Quickswap
+    address router=0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D; // on Polygon for Uniswap and Quickswap
 
     // GET CONTRACT BALANCE
     function getBalanceOfToken(address _address) public view returns (uint256) {
@@ -72,6 +72,7 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         uint PriceOracleExit = priceFeedLast * USDTExit; 
 
         require(PriceOracleEntry <= PriceOracleExit, "Proof of Price Variation not valid ");
+
 
     }
 

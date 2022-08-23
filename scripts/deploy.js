@@ -2,15 +2,19 @@ const hre = require("hardhat");
 
 async function main() {
   
-  //const SaintEthAmount = hre.ethers.utils.parseEther("0.1");
+  const PRICE = await hre.ethers.getContractFactory("PriceConsumerV3");
+  const price= await PRICE.deploy();
 
-  const MoodyLink = await hre.ethers.getContractFactory("SaintEth");
-  const moodyLink= await MoodyLink.deploy(10185);
+  const Botminator = await hre.ethers.getContractFactory("PriceConsumerV3");
+  const botminator= await Botminator.deploy();
 
-  await moodyLink.deployed();
-  //this is deployed. ok 
+  await price.deployed();
+  await botminator.deployed();
 
-  console.log("Saint Eth", moodyLink.address);
+  console.log('Price deployed to', price.address);
+  const latestPrice = await price.getLatestPrice();
+  console.log("Latest price:", latestPrice);
+  console.log("Botminator deployed to", botminator.address)
 }
 
 // We recommend this pattern to be able to use async/await everywhere

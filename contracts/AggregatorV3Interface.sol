@@ -11,12 +11,12 @@ contract PriceConsumerV3 {
     AggregatorV3Interface internal priceFeed;
 
     /**
-     * Network: Polygon
-     * Aggregator: LINK/MATIC
-     * Address: 0x12162c3E810393dEC01362aBf156D7ecf6159528
+     * Network: Goerli
+     * Aggregator: LINK/USD
+     * Address: 0x48731cF7e84dc94C5f84577882c14Be11a5B7456
      */
     constructor() {
-        priceFeed = AggregatorV3Interface(0x12162c3E810393dEC01362aBf156D7ecf6159528);
+        priceFeed = AggregatorV3Interface(0x48731cF7e84dc94C5f84577882c14Be11a5B7456);
     }
 
     /**
@@ -30,6 +30,6 @@ contract PriceConsumerV3 {
             /*uint timeStamp*/,
             /*uint80 answeredInRound*/
         ) = priceFeed.latestRoundData();
-        return price;
+        return price / 1e8; // 
     }
 }
