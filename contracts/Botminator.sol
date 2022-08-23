@@ -20,7 +20,7 @@ contract Botminator is Ownable, PriceConsumerV3{
 
 
         // getting liquidity from illiquid market : swapping USD for token of your choice on QuickSwap 
-        // USDC --> AAVE
+        // Y --> X 
         uint amountIn = numberOftokens * 10 ** 18; 
         require(IERC20(tokenIn).transferFrom(msg.sender, address(this), amountIn), 'failed');
         require(IERC20(tokenIn).approve(router, amountIn), 'failed'); //gives the router allowance on amountIn on the input token.
@@ -32,12 +32,12 @@ contract Botminator is Ownable, PriceConsumerV3{
 
 
         // selling in liquid market : hedging by selling same token bought on more liquid market UNISWAP 
-        // AAVE --> USDC 
+        // X --> Y
 
         uint priceFeedPair = uint(getLatestPrice());  //using chainlink oracle to query to price as time t 
         uint newAmountIn = priceFeedPair * amounts[0];
         require(IERC20(tokenOut).transferFrom(msg.sender, address(this), newAmountIn), 'failed');
-        require(IERC20(tokenIn).approve(router, newAmountIn), 'failed'); //gives the router allowance on amountOut on the NEW input token.
+        require(IERC20(tokenOut).approve(router, newAmountIn), 'failed'); //gives the router allowance on amountOut on the NEW input token.
         address[] memory reverseTokens = new address[](2);
         reverseTokens[0] = tokenOut; 
         reverseTokens[1] = tokenIn;
