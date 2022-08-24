@@ -143,16 +143,16 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         for (uint i ; i < maxAmount ; i++){
             if (HedgerRoute1Map[i] > i){
                 return _result = true; 
+            } else {
+            if (HedgerRoute2Map[i] > i){
+                return _result = true; 
+            }
+
             }
             
         }
 
-        for (uint i ; i < maxAmount ; i++){
-            if (HedgerRoute2Map[i] > i){
-                return _result = true; 
-            }
-            
-        }
+    
 
     }
 
