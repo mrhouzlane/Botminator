@@ -11,6 +11,10 @@ This is a trading bot doing swaps in Uniswap / Quickswap basing it's profitabili
 
 The logic is the following, we are trading USDT for LINK then LINK for USDT :
 
+![PoPV](./docs/PoPV.png)
+
+
+
 - 1st swap : 
 
         Start :    0 LINK tokens at Price of x(t)$/token  || Spending 50$ of tokens(amountIn) of USDT     [Query Price of USDT to get total spent in $]
