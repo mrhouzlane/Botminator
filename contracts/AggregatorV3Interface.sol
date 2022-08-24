@@ -12,15 +12,14 @@ contract PriceConsumerV3 {
     AggregatorV3Interface internal priceFeedUSDT;
 
     /**
-     * Network: Mumbai
-     * Aggregator: 2 Paris 
+     * Network: Polygon
+     * Aggregator: 
      * Address: 
      */
     constructor() {
-        priceFeedSAND = AggregatorV3Interface(0x9dd18534b8f456557d11B9DDB14dA89b2e52e308); //SAND/USD
-        priceFeedUSDT = AggregatorV3Interface(0x92C09849638959196E976289418e5973CC96d645); // USDT/USD
+        priceFeedSAND = AggregatorV3Interface(0x3D49406EDd4D52Fb7FFd25485f32E073b529C924); //SAND/USD
+        priceFeedUSDT = AggregatorV3Interface(0x0A6513e40db6EB1b165753AD52E80663aeA50545); // USDT/USD
     }
-
 
     /**
      * Returns the latest price
