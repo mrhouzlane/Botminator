@@ -13,18 +13,17 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     using SafeTransfer for IERC20;
 
     IUniswapV2Router02 Quickswap;
-    IUniswapV2Router02 Uniswap;  
+    IUniswapV2Router02 Sushiswap;  
 
     address SANDAddress = 0x326C977E6efc84E512bB9C30f76E30c160eD06FB; // Polygon
     address USDTAddress = 0xc2132D05D31c914a87C6611C10748AEb04B58e8F; // Polygon
 
-    address routerUniswap = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45; // Uniswap V3 Polygon
-    address routerQuickswap = 0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff; //Quickswap router on Polygon
+    address routerSushiswap = 0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506; // Sushiswap router on Polygon
+    address routerQuickswap = 0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff; // Quickswap router on Polygon
 
-    //0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D GOERLI
     constructor() {
         Quickswap = IUniswapV2Router02(routerQuickswap);
-        Uniswap = IUniswapV2Router02(routerUniswap);
+        Sushiswap = IUniswapV2Router02(routerSushiswap);
     }
     
     // GET CONTRACT BALANCE
@@ -43,15 +42,15 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         uint PriceOracleEntry = priceFeed1 * amountIn;
 
         require(IERC20(USDTAddress).transferFrom(msg.sender, address(this), amountIn), 'failed');
-        require(IERC20(USDTAddress).approve(routerUniswap, amountIn), 'failed');
+        require(IERC20(USDTAddress).approve(routerSushiswap, amountIn), 'failed');
 
         //Swapping 
 		address[] memory tokens = new address[](2);
 		tokens[0] = USDTAddress;
 		tokens[1] = SANDAddress;
 		uint maxTimeToSwap = block.timestamp + 300;
-        uint amountOutMin = Uniswap.getAmountsOut(amountIn, tokens)[1]; //AmountOutMin of LINK TOKEN
-		uint amounts = Uniswap.swapExactTokensForTokens(amountIn, amountOutMin, tokens, address(this), maxTimeToSwap)[1]; //Nbr of token LINK Swapped
+        uint amountOutMin = Sushiswap.getAmountsOut(amountIn, tokens)[1]; //AmountOutMin of LINK TOKEN
+		uint amounts = Sushiswap.swapExactTokensForTokens(amountIn, amountOutMin, tokens, address(this), maxTimeToSwap)[1]; //Nbr of token LINK Swapped
 
         require(amounts > 0, "Transaction aborted");
 
