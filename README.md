@@ -2,20 +2,16 @@
 
 🪢🪢 This is the official repository for Chainlink Hackathon with Encode Club 2022 🪢🪢
 
+This is a trading bot doing swaps in Sushiswap / Quickswap basing it's profitability on difference between the Price returned by the Oracle for the ```amountIn``` and the Price returned by the Oracle for the ```amountOut```.
 **REMINDER**  THIS IS NOT A FLASHSWAP BUT TRADING LOGIC BASED ON ORACLE PRICING -- YOU DO YOU, WE ARE NOT RESPONSIBLE FOR ANY LOSSES -- 
 
 
 ### Proof of Price Variation : PoPV
 
-This is a trading bot doing swaps in Uniswap / Quickswap basing it's profitability on difference between the Price returned by the Oracle for the ```amountIn``` and the Price returned by the Oracle for the ```amountOut```.
-
-The logic is the following, we are trading USDT for LINK then LINK for USDT :
+The logic is the following, we are trading USDT for SAND using Sushiswap then SAND for USDT using Quickswap : 
 
 ![PoPV](./docs/PoPVOK.png)
 
-
-   
-  -  For this we are using ChainlinkOracle to query prices at many times of the process : 
  
  - So to be profitable you must have :  ``` amounts - x = (amountIn * priceFeed(USDT)) / (priceFeed(SAND)) ``` 
  
