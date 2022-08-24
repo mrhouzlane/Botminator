@@ -18,7 +18,7 @@ describe("Botminator", function() {
 
   describe('Deployment', function() {
     it('Should deploy to the right router', async function () {
-     // const router ='0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'; 
+    
     })
   });
 
