@@ -18,14 +18,13 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     address SANDAddress = 0x326C977E6efc84E512bB9C30f76E30c160eD06FB; // Polygon
     address USDTAddress = 0xc2132D05D31c914a87C6611C10748AEb04B58e8F; // Polygon
 
-    address routerUniswap = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45; // on Polygon for Uniswap and Quickswap
+    address routerUniswap = 0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45; // Uniswap V3 Polygon
     address routerQuickswap = 0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff; //Quickswap router on Polygon
 
     //0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D GOERLI
     constructor() {
         Quickswap = IUniswapV2Router02(routerQuickswap);
         Uniswap = IUniswapV2Router02(routerUniswap);
-
     }
     
     // GET CONTRACT BALANCE
