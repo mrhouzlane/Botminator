@@ -5,37 +5,22 @@
 **REMINDER**  THIS IS NOT A FLASHSWAP BUT TRADING LOGIC BASED ON ORACLE PRICING -- YOU DO YOU, WE ARE NOT RESPONSIBLE FOR ANY LOSSES -- 
 
 
-## Proof of Price Variation : PoPV
+### Proof of Price Variation : PoPV
 
 This is a trading bot doing swaps in Uniswap / Quickswap basing it's profitability on difference between the Price returned by the Oracle for the ```amountIn``` and the Price returned by the Oracle for the ```amountOut```.
 
 The logic is the following, we are trading USDT for LINK then LINK for USDT :
 
-![PoPV](./docs/PoPV.png)
+![PoPV](./docs/PoPVOK.png)
 
 
-
-- 1st swap : 
-
-        Start :    0 LINK tokens at Price of x(t)$/token  || Spending 50$ of tokens(amountIn) of USDT     [Query Price of USDT to get total spent in $]
-        
-        ---------   ---------  ---------   ---------   ---------  ---------             How many                    
-        
-        ---------   ---------  ---------   ---------   ---------  ---------             [Query Price of LINK to calculate $ we have ] 
-
-  
-         END of first swap :      y LINK tokens = amounts at Price of x(t(n+1))$/token  ||  How much dollar of y LINK tokens we have ? (priceFeed2) 
-  
-        
- To be profitable you need to have ``` y(LINK) * priceOfLink at t(n+1) >= 50$ ``` 
+   
+  -  For this we are using ChainlinkOracle to query prices at many times of the process : 
  
- #### For this we are using ChainlinkOracle to query prices at many times of the process : 
+ - So to be profitable you must have :  ``` amounts - x = (amountIn * priceFeed(USDT)) / (priceFeed(SAND)) ``` 
  
- - So to be profitable you must have :  ``` amounts - x = (amountIn * priceFeed(USDT)) / (priceFeed2) ``` 
+ --->  where [amounts - x]  is the number of SAND tokens minimum to swap to be profitable when using Quickswap after the first swap.
  
- --->  where [amounts - x]  is the number of LINK tokens minimum to swap to be profitable. 
- 
-
 ### Strategy : 
 
 Cross-exchange market making :
@@ -57,12 +42,8 @@ The aim here is to create a bot arbitrage with swaps that can reduce the risk of
 
 ### Analysis Tools : 
 
-[DeFiLLAMA](https://defillama.com/)
+[DeFi Tool](https://defillama.com/)
 
-
------------------------------------------------------------------------------------------------------------------------------------------------------------
-
------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ### CHAINLINK KEEPERS 
 
@@ -73,13 +54,13 @@ The aim here is to create a bot arbitrage with swaps that can reduce the risk of
 - ...
 - ...
 
-## Why ?
+### Why ?
 
 - Chainlink Keepers can execute a portion of the code deployed on-chain at a basic minimum web dev costs. 
 - Distinct service that only compute code for that contract on-chain. 
 - Save Ethereum fees. 
 - Privacy 
 
-## Future : 
+### Future : 
 
 

@@ -54,6 +54,10 @@ describe("Botminator", function() {
       })
 
     })
+
+    it('Should transfer USDT to the contract', async function () {
+    
+    })
   });
 
 

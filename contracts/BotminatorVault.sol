@@ -36,7 +36,7 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     function Hedger(uint256 amountIn) private {
 
 
-        // USDT--> SAND         -------- UNISWAP --------- 
+        // USDT--> SAND         -------- Sushiswap --------- 
         //Sending USDT to the vault and approving 
         uint priceFeed1 = uint(getLatestPrice(priceFeedUSDT));
         uint PriceOracleEntry = priceFeed1 * amountIn;
