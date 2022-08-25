@@ -39,25 +39,39 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     ///@notice getting liquidity from illiquid market and selling in liquid market 
     function HedgerRoute1(uint256 amountIn) public {
 
-
         // USDT--> SAND         -------- Sushiswap --------- 
         //Sending USDT to the vault and approving 
         uint priceFeed1 = uint(getLatestPrice(priceFeedUSDT));
         uint PriceOracleEntry = priceFeed1 * amountIn; 
 
+
         require(IERC20(USDTAddress).transferFrom(msg.sender, address(this), amountIn), 'failed');
         require(IERC20(USDTAddress).approve(routerSushiswap, amountIn), 'failed');
 
-        //Swapping 
 		address[] memory tokens = new address[](2);
 		tokens[0] = USDTAddress;
 		tokens[1] = SANDAddress;
 		uint maxTimeToSwap = block.timestamp + 300;
         uint amountOutMin1 = Sushiswap.getAmountsOut(amountIn, tokens)[1]; 
+
+
+        address[] memory reverseTokens = new address[](2);
+        reverseTokens[0] = SANDAddress; 
+        reverseTokens[1] = USDTAddress;
+
+
+        // -------- USED ONLY FOR CHECKING ----------- 
+        uint priceFeedLast = uint(getLatestPrice(priceFeedUSDT));
+        uint expectedOutMin2 = Sushiswap.getAmountsOut(amountOutMin1, reverseTokens)[1];
+        uint expectedPriceOracleExit = priceFeedLast * expectedOutMin2;
+        HedgerRoute2Map[PriceOracleEntry] = expectedPriceOracleExit; 
+        // -------  USED ONLY FOR CHECKING ------------
+
+
+        // ------ SWAP CAN START NOW --------------------
+
 		uint amounts = Sushiswap.swapExactTokensForTokens(amountIn, amountOutMin1, tokens, address(this), maxTimeToSwap)[1]; 
-
         require(amounts > 0, "Transaction aborted");
-
 
         //Reverse Swap : SAND --> USDT       ------ Quickswap ------ 
         //Calcul of new input token based on last price of Output Token :
@@ -67,28 +81,9 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         //DO SECOND SWAP 
         require(IERC20(SANDAddress).transferFrom(msg.sender, address(this), newAmountIn), 'failed');
         require(IERC20(SANDAddress).approve(routerQuickswap, newAmountIn), 'failed'); // Allowance of LINK 
-        address[] memory reverseTokens = new address[](2);
-        reverseTokens[0] = SANDAddress; 
-        reverseTokens[1] = USDTAddress;
         uint amountOutMin2 = Quickswap.getAmountsOut(amounts, reverseTokens)[1]; //AmountOutMin of USDT Token
-
-
-        // -------- USED ONLY FOR CHECKING ----------- 
-        uint priceFeedLast = uint(getLatestPrice(priceFeedUSDT));
-        uint expectedOutMin2 = Quickswap.getAmountsOut(amountOutMin1, reverseTokens)[1];
-        uint expectedPriceOracleExit = priceFeedLast * expectedOutMin2;
-        HedgerRoute1Map[PriceOracleEntry] = expectedPriceOracleExit; 
-        // -------  USED ONLY FOR CHECKING ------------
-
         Quickswap.swapExactTokensForTokens(newAmountIn, amountOutMin2, reverseTokens, address(this), maxTimeToSwap)[1];
-
-        // Arbitrage or not ? 
-        //uint newUSDTBalance = IERC20(USDTAddress).balanceOf(address(this));
-        uint PriceOracleExit = priceFeedLast * amountOutMin2; 
-
-        HedgerRoute1Map[PriceOracleEntry] = PriceOracleExit;
-
-        require(PriceOracleEntry <= PriceOracleExit, "Proof of Price Variation not valid ");
+    
 
     }
 
@@ -100,22 +95,35 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         // USDT--> SAND         -------- Quickswap --------- 
         //Sending USDT to the vault and approving 
         uint priceFeed1 = uint(getLatestPrice(priceFeedUSDT));
-        uint PriceOracleEntry = priceFeed1 * amountIn; 
- 
+        uint PriceOracleEntry = priceFeed1 * amountIn;  
 
         require(IERC20(USDTAddress).transferFrom(msg.sender, address(this), amountIn), 'failed');
         require(IERC20(USDTAddress).approve(routerQuickswap, amountIn), 'failed');
 
-        //Swapping 
-		address[] memory tokens = new address[](2);
+        
+        address[] memory tokens = new address[](2);
 		tokens[0] = USDTAddress;
 		tokens[1] = SANDAddress;
 		uint maxTimeToSwap = block.timestamp + 300;
         uint amountOutMin1 = Quickswap.getAmountsOut(amountIn, tokens)[1]; 
 
+        address[] memory reverseTokens = new address[](2);
+        reverseTokens[0] = SANDAddress; 
+        reverseTokens[1] = USDTAddress;
 
+        
+         // -------- USED ONLY FOR CHECKING ----------- 
+        uint priceFeedLast = uint(getLatestPrice(priceFeedUSDT));
+        uint expectedOutMin2 = Sushiswap.getAmountsOut(amountOutMin1, reverseTokens)[1];
+        uint expectedPriceOracleExit = priceFeedLast * expectedOutMin2;
+        HedgerRoute2Map[PriceOracleEntry] = expectedPriceOracleExit; 
+        // -------  USED ONLY FOR CHECKING ------------
+
+
+
+		
+        // ------ SWAP CAN START NOW --------------------
 		uint amounts = Quickswap.swapExactTokensForTokens(amountIn, amountOutMin1, tokens, address(this), maxTimeToSwap)[1]; 
-
         require(amounts > 0, "Transaction aborted");
 
 
@@ -127,26 +135,11 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         //DO SECOND SWAP 
         require(IERC20(SANDAddress).transferFrom(msg.sender, address(this), newAmountIn), 'failed');
         require(IERC20(SANDAddress).approve(routerSushiswap, newAmountIn), 'failed'); // Allowance of LINK 
-        address[] memory reverseTokens = new address[](2);
-        reverseTokens[0] = SANDAddress; 
-        reverseTokens[1] = USDTAddress;
+       
         uint amountOutMin2 = Sushiswap.getAmountsOut(amounts, reverseTokens)[1]; //AmountOutMin of USDT Token
-
-        // -------- USED ONLY FOR CHECKING ----------- 
-        uint priceFeedLast = uint(getLatestPrice(priceFeedUSDT));
-        uint expectedOutMin2 = Sushiswap.getAmountsOut(amountOutMin1, reverseTokens)[1];
-        uint expectedPriceOracleExit = priceFeedLast * expectedOutMin2;
-        HedgerRoute2Map[PriceOracleEntry] = expectedPriceOracleExit; 
-        // -------  USED ONLY FOR CHECKING ------------
-
-
         Sushiswap.swapExactTokensForTokens(newAmountIn, amountOutMin2, reverseTokens, address(this), maxTimeToSwap)[1];
 
-        // Arbitrage or not ? 
-        //uint newUSDTBalance = IERC20(USDTAddress).balanceOf(address(this));
-        uint PriceOracleExit = priceFeedLast * amountOutMin2; 
-
-        require(PriceOracleEntry <= PriceOracleExit, "Proof of Price Variation not valid ");
+    
 
     }
 
