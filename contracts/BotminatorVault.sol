@@ -136,19 +136,30 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     }
 
 
-    function checkSwapParams() public view returns (bool _result) {
+    function checkSwapParams() public view returns (bytes memory botCalls) {
 
         // checking for 0<i< 1000 $ : if  HedgerRoute2Map[i] > i -> return true 
         uint maxAmount = 1000;
         for (uint i ; i < maxAmount ; i++){
             if (HedgerRoute1Map[i] > i){
-                return _result = true; 
+              
+                bool param1 = true;
+                bool param2 = false;
+                uint amountIn = i;
+                return abi.encodePacked(param1, param2, amountIn);
             } else {
             if (HedgerRoute2Map[i] > i){
-                return _result = true; 
+
+                bool param1 = false;
+                bool param2 = true;
+                uint amountIn = i;
+                return abi.encodePacked(param1, param2, amountIn);
+                
             }
 
             }
+
+            
             
         }
 
