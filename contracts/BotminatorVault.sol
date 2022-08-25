@@ -62,7 +62,7 @@ contract botminatorVault is Ownable, PriceConsumerV3{
 
         // -------- USED ONLY FOR CHECKING ----------- 
         uint priceFeedLast = uint(getLatestPrice(priceFeedUSDT));
-        uint expectedOutMin2 = Sushiswap.getAmountsOut(amountOutMin1, reverseTokens)[1];
+        uint expectedOutMin2 = Quickswap.getAmountsOut(amountOutMin1, reverseTokens)[1];
         uint expectedPriceOracleExit = priceFeedLast * expectedOutMin2;
         HedgerRoute2Map[PriceOracleEntry] = expectedPriceOracleExit; 
         // -------  USED ONLY FOR CHECKING ------------
