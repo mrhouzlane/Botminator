@@ -17,6 +17,7 @@ contract botminatorVault is Ownable, PriceConsumerV3{
 
     mapping( uint => uint ) public HedgerRoute1Map ; //mapping between amountIn and amoutOut 
     mapping( uint => uint ) public HedgerRoute2Map ; //mapping between amountIn and amoutOut
+    mapping( uint => uint ) public Checker; // mapping an id to a checking 
 
 
     address SANDAddress = 0x326C977E6efc84E512bB9C30f76E30c160eD06FB; // Polygon
@@ -126,7 +127,7 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     
     }
 
-    function predictSwapOracleRoute1(uint numberOfTokenIn) external {
+    function predictSwapOracleRoute1(uint numberOfTokenIn) external returns (bool) {
 
         // setup of tokens 
         address[] memory tokens = new address[](2);
@@ -146,13 +147,16 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         uint priceFeedLast = uint(getLatestPrice(priceFeedUSDT));
         uint expectedPriceOracleExit = priceFeedLast * expectedOutMin2; 
         
-        HedgerRoute1Map[PriceOracleEntry] = expectedPriceOracleExit; 
+        HedgerRoute1Map[PriceOracleEntry] = expectedPriceOracleExit;
 
-        // require(PriceOracleEntry <= expectedPriceOracleExit, "Non-Profitable Route");
+        if (PriceOracleEntry < expectedPriceOracleExit){
+            return true;
+        } 
+
     }
 
 
-    function predictSwapOracleRoute2(uint numberOfTokenIn) external {
+    function predictSwapOracleRoute2(uint numberOfTokenIn) external returns (bool) {
 
         // setup of tokens 
         address[] memory tokens = new address[](2);
@@ -171,8 +175,12 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         uint PriceOracleEntry = priceFeed1 * numberOfTokenIn;  
         uint priceFeedLast = uint(getLatestPrice(priceFeedUSDT));
         uint expectedPriceOracleExit = priceFeedLast * expectedOutMin2; 
-        
-        HedgerRoute2Map[PriceOracleEntry] = expectedPriceOracleExit; 
+
+        HedgerRoute2Map[PriceOracleEntry] = expectedPriceOracleExit;
+
+        if (PriceOracleEntry < expectedPriceOracleExit){
+            return true;
+        } 
 
         // require(PriceOracleEntry <= expectedPriceOracleExit, "Non-Profitable Route");
     }
