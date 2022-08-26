@@ -150,7 +150,7 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     }
 
 
-    function checkSwapParams() public view returns (bytes memory botCalls) {
+    function checkSwapParams() public view returns (bool, bool, uint) {
 
         // checking for 0<i< 5 $ : if  HedgerRoute2Map[i] > i -> return true 
         uint i = 1000;
@@ -159,14 +159,14 @@ contract botminatorVault is Ownable, PriceConsumerV3{
                 bool param1 = true;
                 bool param2 = false;
                 uint amountIn = i;
-                return abi.encodePacked(param1, param2, amountIn);
+                return (param1, param2, amountIn);
             } else {
             if (HedgerRoute2Map[i] > i){
 
                 bool param1 = false;
                 bool param2 = true;
                 uint amountIn = i;
-                return abi.encodePacked(param1, param2, amountIn);
+                return (param1, param2, amountIn);
                 
             }
 
