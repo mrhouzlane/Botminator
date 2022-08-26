@@ -36,13 +36,17 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     }
 
 
+    
+
+
+
     ///@notice getting liquidity from illiquid market and selling in liquid market 
     function HedgerRoute1(uint256 amountIn) public {
 
         // USDT--> SAND         -------- Sushiswap --------- 
         //Sending USDT to the vault and approving 
         uint priceFeed1 = uint(getLatestPrice(priceFeedUSDT));
-        uint PriceOracleEntry = priceFeed1 * amountIn; 
+        // uint PriceOracleEntry = priceFeed1 * amountIn; 
 
 
         require(IERC20(USDTAddress).transferFrom(msg.sender, address(this), amountIn), 'failed');
@@ -58,15 +62,6 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         address[] memory reverseTokens = new address[](2);
         reverseTokens[0] = SANDAddress; 
         reverseTokens[1] = USDTAddress;
-
-
-        // -------- USED ONLY FOR CHECKING ----------- 
-        uint priceFeedLast = uint(getLatestPrice(priceFeedUSDT));
-        uint expectedOutMin2 = Quickswap.getAmountsOut(amountOutMin1, reverseTokens)[1];
-        uint expectedPriceOracleExit = priceFeedLast * expectedOutMin2;
-        HedgerRoute2Map[PriceOracleEntry] = expectedPriceOracleExit; 
-        // -------  USED ONLY FOR CHECKING ------------
-
 
         // ------ SWAP CAN START NOW --------------------
 
@@ -95,7 +90,7 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         // USDT--> SAND         -------- Quickswap --------- 
         //Sending USDT to the vault and approving 
         uint priceFeed1 = uint(getLatestPrice(priceFeedUSDT));
-        uint PriceOracleEntry = priceFeed1 * amountIn;  
+        // uint PriceOracleEntry = priceFeed1 * amountIn;  
 
         require(IERC20(USDTAddress).transferFrom(msg.sender, address(this), amountIn), 'failed');
         require(IERC20(USDTAddress).approve(routerQuickswap, amountIn), 'failed');
@@ -111,21 +106,10 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         reverseTokens[0] = SANDAddress; 
         reverseTokens[1] = USDTAddress;
 
-        
-         // -------- USED ONLY FOR CHECKING ----------- 
-        uint priceFeedLast = uint(getLatestPrice(priceFeedUSDT));
-        uint expectedOutMin2 = Sushiswap.getAmountsOut(amountOutMin1, reverseTokens)[1];
-        uint expectedPriceOracleExit = priceFeedLast * expectedOutMin2;
-        HedgerRoute2Map[PriceOracleEntry] = expectedPriceOracleExit; 
-        // -------  USED ONLY FOR CHECKING ------------
-
-
-
 		
         // ------ SWAP CAN START NOW --------------------
 		uint amounts = Quickswap.swapExactTokensForTokens(amountIn, amountOutMin1, tokens, address(this), maxTimeToSwap)[1]; 
         require(amounts > 0, "Transaction aborted");
-
 
         //Reverse Swap : SAND --> USDT       ------ Sushiswap ------ 
         //Calcul of new input token based on last price of Output Token :
@@ -140,20 +124,66 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         Sushiswap.swapExactTokensForTokens(newAmountIn, amountOutMin2, reverseTokens, address(this), maxTimeToSwap)[1];
 
     
+    }
 
+    function predictSwapOracleRoute1(uint numberOfTokenIn) external {
+
+        // setup of tokens 
+        address[] memory tokens = new address[](2);
+		tokens[0] = USDTAddress;
+		tokens[1] = SANDAddress;
+        address[] memory reverseTokens = new address[](2);
+        reverseTokens[0] = SANDAddress; 
+        reverseTokens[1] = USDTAddress;
+
+        // Prediction of expectedOut amount after 2 swaps 
+        uint amountOutMin1 = Sushiswap.getAmountsOut(numberOfTokenIn, tokens)[1];  //prediction nbr tokens after 1 swap 
+        uint expectedOutMin2 = Quickswap.getAmountsOut(amountOutMin1, reverseTokens)[1]; //prediction nbr tokens after 2nd swap 
+
+        // Oracle use to predict the $ we get at the end of 2 swaps
+        uint priceFeed1 = uint(getLatestPrice(priceFeedUSDT));
+        uint PriceOracleEntry = priceFeed1 * numberOfTokenIn;  
+        uint priceFeedLast = uint(getLatestPrice(priceFeedUSDT));
+        uint expectedPriceOracleExit = priceFeedLast * expectedOutMin2; 
+        
+        HedgerRoute1Map[PriceOracleEntry] = expectedPriceOracleExit; 
+
+        // require(PriceOracleEntry <= expectedPriceOracleExit, "Non-Profitable Route");
     }
 
 
+    function predictSwapOracleRoute2(uint numberOfTokenIn) external {
 
-    function predictSwap() public view returns (uint){
+        // setup of tokens 
+        address[] memory tokens = new address[](2);
+		tokens[0] = USDTAddress;
+		tokens[1] = SANDAddress;
+        address[] memory reverseTokens = new address[](2);
+        reverseTokens[0] = SANDAddress; 
+        reverseTokens[1] = USDTAddress;
 
+        // Prediction of expectedOut amount after 2 swaps 
+        uint amountOutMin1 = Quickswap.getAmountsOut(numberOfTokenIn, tokens)[1];  //prediction nbr tokens after 1 swap 
+        uint expectedOutMin2 = Sushiswap.getAmountsOut(amountOutMin1, reverseTokens)[1]; //prediction nbr tokens after 2nd swap 
+
+        // Oracle use to predict the $ we get at the end of 2 swaps
+        uint priceFeed1 = uint(getLatestPrice(priceFeedUSDT));
+        uint PriceOracleEntry = priceFeed1 * numberOfTokenIn;  
+        uint priceFeedLast = uint(getLatestPrice(priceFeedUSDT));
+        uint expectedPriceOracleExit = priceFeedLast * expectedOutMin2; 
+        
+        HedgerRoute2Map[PriceOracleEntry] = expectedPriceOracleExit; 
+
+        // require(PriceOracleEntry <= expectedPriceOracleExit, "Non-Profitable Route");
     }
 
 
     function checkSwapParams() public view returns (bool, bool, uint) {
 
         // checking for 0<i< 5 $ : if  HedgerRoute2Map[i] > i -> return true 
-        uint i = 1000;
+        uint i = 1000; //1000 $
+
+        // -------  USED ONLY FOR CHECKING ------------
     
             if (HedgerRoute1Map[i] > i){
                 bool param1 = true;
@@ -168,15 +198,8 @@ contract botminatorVault is Ownable, PriceConsumerV3{
                 uint amountIn = i;
                 return (param1, param2, amountIn);
                 
-            }
-
-            
-
-            
-            
+            }       
         }
-
-    
 
     }
 
