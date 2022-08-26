@@ -17,7 +17,6 @@ contract botminatorVault is Ownable, PriceConsumerV3{
 
     mapping( uint => uint ) public HedgerRoute1Map ; //mapping between amountIn and amoutOut 
     mapping( uint => uint ) public HedgerRoute2Map ; //mapping between amountIn and amoutOut
-    mapping( uint => uint ) public Checker; // mapping an id to a checking 
 
 
     address SANDAddress = 0x326C977E6efc84E512bB9C30f76E30c160eD06FB; // Polygon
@@ -41,23 +40,25 @@ contract botminatorVault is Ownable, PriceConsumerV3{
 
 
 
-    ///@notice getting liquidity from illiquid market and selling in liquid market 
+    ///@notice getting liquidity from illiquid market and selling in liquid market
+    ///@dev amountIn is the amount in dollars that you want to spend 
     function HedgerRoute1(uint256 amountIn) public {
 
         // USDT--> SAND         -------- Sushiswap --------- 
         //Sending USDT to the vault and approving 
         uint priceFeed1 = uint(getLatestPrice(priceFeedUSDT));
+        uint amountInTokens = amountIn / priceFeed1;
         // uint PriceOracleEntry = priceFeed1 * amountIn; 
 
 
-        require(IERC20(USDTAddress).transferFrom(msg.sender, address(this), amountIn), 'failed');
-        require(IERC20(USDTAddress).approve(routerSushiswap, amountIn), 'failed');
+        require(IERC20(USDTAddress).transferFrom(msg.sender, address(this), amountInTokens), 'failed');
+        require(IERC20(USDTAddress).approve(routerSushiswap, amountInTokens), 'failed');
 
 		address[] memory tokens = new address[](2);
 		tokens[0] = USDTAddress;
 		tokens[1] = SANDAddress;
 		uint maxTimeToSwap = block.timestamp + 300;
-        uint amountOutMin1 = Sushiswap.getAmountsOut(amountIn, tokens)[1]; 
+        uint amountOutMin1 = Sushiswap.getAmountsOut(amountInTokens, tokens)[1]; 
 
 
         address[] memory reverseTokens = new address[](2);
@@ -66,13 +67,13 @@ contract botminatorVault is Ownable, PriceConsumerV3{
 
         // ------ SWAP CAN START NOW --------------------
 
-		uint amounts = Sushiswap.swapExactTokensForTokens(amountIn, amountOutMin1, tokens, address(this), maxTimeToSwap)[1]; 
+		uint amounts = Sushiswap.swapExactTokensForTokens(amountInTokens, amountOutMin1, tokens, address(this), maxTimeToSwap)[1]; 
         require(amounts > 0, "Transaction aborted");
 
         //Reverse Swap : SAND --> USDT       ------ Quickswap ------ 
         //Calcul of new input token based on last price of Output Token :
         uint priceFeed2 = uint(getLatestPrice(priceFeedSAND));
-        uint newAmountIn = amounts - ((amountIn * priceFeed1)/priceFeed2);
+        uint newAmountIn = amounts - ((amountInTokens * priceFeed1)/priceFeed2);
 
         //DO SECOND SWAP 
         require(IERC20(SANDAddress).transferFrom(msg.sender, address(this), newAmountIn), 'failed');
@@ -85,23 +86,24 @@ contract botminatorVault is Ownable, PriceConsumerV3{
 
 
     ///@notice getting liquidity from illiquid market and selling in liquid market 
+    ///@dev amountIn is the amount in dollars that you want to spend 
     function HedgerRoute2(uint256 amountIn) public {
-
 
         // USDT--> SAND         -------- Quickswap --------- 
         //Sending USDT to the vault and approving 
         uint priceFeed1 = uint(getLatestPrice(priceFeedUSDT));
+        uint amountInTokens = amountIn / priceFeed1;
         // uint PriceOracleEntry = priceFeed1 * amountIn;  
 
-        require(IERC20(USDTAddress).transferFrom(msg.sender, address(this), amountIn), 'failed');
-        require(IERC20(USDTAddress).approve(routerQuickswap, amountIn), 'failed');
+        require(IERC20(USDTAddress).transferFrom(msg.sender, address(this), amountInTokens), 'failed');
+        require(IERC20(USDTAddress).approve(routerQuickswap, amountInTokens), 'failed');
 
         
         address[] memory tokens = new address[](2);
 		tokens[0] = USDTAddress;
 		tokens[1] = SANDAddress;
 		uint maxTimeToSwap = block.timestamp + 300;
-        uint amountOutMin1 = Quickswap.getAmountsOut(amountIn, tokens)[1]; 
+        uint amountOutMin1 = Quickswap.getAmountsOut(amountInTokens, tokens)[1]; 
 
         address[] memory reverseTokens = new address[](2);
         reverseTokens[0] = SANDAddress; 
@@ -109,13 +111,13 @@ contract botminatorVault is Ownable, PriceConsumerV3{
 
 		
         // ------ SWAP CAN START NOW --------------------
-		uint amounts = Quickswap.swapExactTokensForTokens(amountIn, amountOutMin1, tokens, address(this), maxTimeToSwap)[1]; 
+		uint amounts = Quickswap.swapExactTokensForTokens(amountInTokens, amountOutMin1, tokens, address(this), maxTimeToSwap)[1]; 
         require(amounts > 0, "Transaction aborted");
 
         //Reverse Swap : SAND --> USDT       ------ Sushiswap ------ 
         //Calcul of new input token based on last price of Output Token :
         uint priceFeed2 = uint(getLatestPrice(priceFeedSAND));
-        uint newAmountIn = amounts - ((amountIn * priceFeed1)/priceFeed2);
+        uint newAmountIn = amounts - ((amountInTokens * priceFeed1)/priceFeed2);
 
         //DO SECOND SWAP 
         require(IERC20(SANDAddress).transferFrom(msg.sender, address(this), newAmountIn), 'failed');
@@ -186,24 +188,24 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     }
 
 
-    function checkSwapParams() public view returns (bool, bool, uint) {
+    function checkSwapParams(uint amountIn) public view returns (bool, bool, uint) {
 
         // checking for 0<i< 5 $ : if  HedgerRoute2Map[i] > i -> return true 
-        uint i = 1000; //1000 $
+        uint i = amountIn; //1000 $
 
         // -------  USED ONLY FOR CHECKING ------------
     
             if (HedgerRoute1Map[i] > i){
                 bool param1 = true;
                 bool param2 = false;
-                uint amountIn = i;
+                i;
                 return (param1, param2, amountIn);
             } else {
             if (HedgerRoute2Map[i] > i){
 
                 bool param1 = false;
                 bool param2 = true;
-                uint amountIn = i;
+                i;
                 return (param1, param2, amountIn);
                 
             }       

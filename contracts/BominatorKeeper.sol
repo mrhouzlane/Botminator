@@ -13,6 +13,7 @@ contract BominatorKeeper is KeeperCompatibleInterface{
     address public owner;
     uint256 lastRunDay = 0;
     bytes32 public config;
+  
 
     constructor(
        bytes32 _config, // optional
@@ -42,10 +43,10 @@ contract BominatorKeeper is KeeperCompatibleInterface{
 
         uint8 shouldRunRoute1 = uint8(performData[0]);
         uint8 shouldRunRoute2 = uint8(performData[1]);
-        bytes memory memcopy = performData;
+        bytes memory memcopy = performData; //34 = 2 + 2 + 32 
         uint256 amount;
         assembly {
-            amount := mload(add(memcopy,0x22))
+            amount := mload(add(memcopy,0x22)) //0x22 = 34 
         }
         bool success;
         if(shouldRunRoute1 == 1){
