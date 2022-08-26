@@ -13,7 +13,6 @@ contract BominatorKeeper is KeeperCompatibleInterface{
     address public owner;
     uint256 lastRunDay = 0;
     bytes32 public config;
-    bool public dummyCalldata;
 
     constructor(
        bytes32 _config, // optional
@@ -36,7 +35,6 @@ contract BominatorKeeper is KeeperCompatibleInterface{
     {
         (bool shouldRunRoute1 , bool shouldRunRoute2 , uint amountToTrade)  = IBotMinator(vaultAddr).checkSwapParams();
         upkeepNeeded = shouldRunRoute1  || shouldRunRoute2;
-        dummyCalldata = true;
         performData = abi.encodePacked(shouldRunRoute1,shouldRunRoute2,amountToTrade);
     }
     
