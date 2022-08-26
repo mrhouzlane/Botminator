@@ -5,6 +5,7 @@ import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
 
 interface IBotMinator {
     function checkSwapParams() external view returns (bool, bool, uint);
+    
 }
 
 contract BominatorKeeper is KeeperCompatibleInterface{

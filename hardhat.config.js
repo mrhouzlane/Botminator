@@ -36,8 +36,8 @@ module.exports = {
     gasPrice: 21
   },
   networks: {
-    goerli: {
-      chainId : 5,
+    mumbai: {
+      chainId : 80001,
       url,
       accounts
     }

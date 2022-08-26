@@ -8,8 +8,8 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract PriceConsumerV3 {
 
-    AggregatorV3Interface internal priceFeedSAND;
-    AggregatorV3Interface internal priceFeedUSDT;
+    AggregatorV3Interface public priceFeedDAI;
+    AggregatorV3Interface public priceFeedSAND;
 
     /**
      * Network: Polygon
@@ -17,8 +17,8 @@ contract PriceConsumerV3 {
      * Address: 
      */
     constructor() {
-        priceFeedSAND = AggregatorV3Interface(0x3D49406EDd4D52Fb7FFd25485f32E073b529C924); //SAND/USD
-        priceFeedUSDT = AggregatorV3Interface(0x0A6513e40db6EB1b165753AD52E80663aeA50545); // USDT/USD
+        priceFeedDAI= AggregatorV3Interface(0x0FCAa9c899EC5A91eBc3D5Dd869De833b06fB046); // MUMBAI more volatile
+        priceFeedSAND = AggregatorV3Interface(0x9dd18534b8f456557d11B9DDB14dA89b2e52e308); // MUMBAI less volatile
     }
 
     /**
@@ -32,6 +32,6 @@ contract PriceConsumerV3 {
             /*uint timeStamp*/,
             /*uint80 answeredInRound*/
         ) = _priceFeed.latestRoundData();
-        return price / 1e8; // 
+        return price; // 
     }
 }
