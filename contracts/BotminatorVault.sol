@@ -8,6 +8,7 @@ import "./IUniswapV2.sol";
 import "./AggregatorV3Interface.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
+import "hardhat/console.sol";
 
 //@notice  Botminator is a vault that will HedgeRisk on UniSwap/QuickSwap
 contract botminatorVault is Ownable, PriceConsumerV3{

@@ -36,6 +36,12 @@ module.exports = {
     gasPrice: 21
   },
   networks: {
+    hardhat: {
+      forking: {
+        url,
+        blockNumber:27799099
+      },
+    },
     mumbai: {
       chainId : 80001,
       url,
