@@ -42,11 +42,11 @@ module.exports = {
         // blockNumber: 27799481
       },
     },
-    mumbai: {
-      chainId : 80001,
-      url,
-      accounts
-    }
+    // mumbai: {
+    //   chainId : 80001,
+    //   url,
+    //   accounts
+    // }
   }
 
 }

@@ -2,18 +2,18 @@ const hre = require("hardhat");
 
 async function main() {
   
-  const PRICE = await hre.ethers.getContractFactory("PriceConsumerV3");
-  const price= await PRICE.deploy();
+  // const PRICE = await hre.ethers.getContractFactory("PriceConsumerV3");
+  // const price= await PRICE.deploy();
 
-  const Botminator = await hre.ethers.getContractFactory("PriceConsumerV3");
+  const Botminator = await hre.ethers.getContractFactory("botminatorVault");
   const botminator= await Botminator.deploy();
 
-  await price.deployed();
+  // await price.deployed();
   await botminator.deployed();
 
-  console.log('Price deployed to', price.address);
-  const latestPrice = await price.getLatestPrice();
-  console.log("Latest price:", latestPrice);
+  // console.log('Price deployed to', price.address);
+  // const latestPrice = await price.getLatestPrice();
+  // console.log("Latest price:", latestPrice);
   console.log("Botminator deployed to", botminator.address)
 }
 

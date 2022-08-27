@@ -17,8 +17,8 @@ contract PriceConsumerV3 {
      * Address: 
      */
     constructor() {
-        priceFeedDAI= AggregatorV3Interface(0x0FCAa9c899EC5A91eBc3D5Dd869De833b06fB046); // MUMBAI more volatile
-        priceFeedSAND = AggregatorV3Interface(0x9dd18534b8f456557d11B9DDB14dA89b2e52e308); // MUMBAI less volatile
+        priceFeedDAI= AggregatorV3Interface(0xAed0c38402a5d19df6E4c03F4E2DceD6e29c1ee9); // Mainnet
+        priceFeedSAND = AggregatorV3Interface(0x35E3f7E558C04cE7eEE1629258EcbbA03B36Ec56); // Mainnet
     }
 
     /**

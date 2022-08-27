@@ -9,7 +9,7 @@ describe("Botminator", function() {
   beforeEach(async function () {
     Botminator = await hre.ethers.getContractFactory("botminatorVault");
     [owner, addr1, addr2, addr3, ...addrs] = await hre.ethers.getSigners();
-    const router='0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'; 
+    // const router='0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'; 
     botminatorContract = await Botminator.deploy()
     console.log("deployed to :", botminatorContract.address)
   });
@@ -51,18 +51,25 @@ describe("Botminator", function() {
 
       // const overrides = {value: hre.ethers.utils.parseEther("0.1")};
       // await botminatorContract.connect(owner).transferLink(overrides);
-      const link = await hre.ethers.getContractAt("IERC20", "0x326C977E6efc84E512bB9C30f76E30c160eD06FB");
-      await link.connect(owner).approve(botminatorContract.address, "10000000000000000000");
+      const link = await hre.ethers.getContractAt("IERC20", "0x514910771AF9Ca656af840dff83E8264EcF986CA");
+      const whaleAddress = "0x7B0419581Eb2e34B4D3Bfc1689f1Bd855d364d9D";
+      await network.provider.request({
+        method: "hardhat_impersonateAccount",
+        params: [whaleAddress],
+      });
+      const whale = await hre.ethers.getSigner(whaleAddress);
+      await link.connect(whale).transfer("0x4593ed9CbE6003e687e5e77368534bb04b162503", hre.ethers.utils.parseEther("100"));
+      await link.connect().approve(botminatorContract.address, "10000000000000000000");
       await botminatorContract.connect(owner).transferLink()
 
-      const dai = await hre.ethers.getContractAt("IERC20", "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889");
-      await dai.connect(owner).approve(botminatorContract.address, "500000000000000000");
+      // const dai = await hre.ethers.getContractAt("IERC20", "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889");
+      // await dai.connect(owner).approve(botminatorContract.address, "500000000000000000");
 
-      const sand = await hre.ethers.getContractAt("IERC20", "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa");
-      await sand.connect(owner).approve(botminatorContract.address, "3478880327338707");
+      // const sand = await hre.ethers.getContractAt("IERC20", "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa");
+      // await sand.connect(owner).approve(botminatorContract.address, "3478880327338707");
 
-      await botminatorContract.HedgerRoute1("500000000000000000");
-      // console.log(bool);
+      // await botminatorContract.HedgerRoute1("500000000000000000");
+      // // console.log(bool);
 
 
 

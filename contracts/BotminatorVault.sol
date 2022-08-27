@@ -23,16 +23,16 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     mapping( uint => uint ) public HedgerRoute2Map ; //mapping between amountIn and amoutOut
 
 
-    // this is wmatic
-    address DAIAddress = 0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889; // Mumbai
+    // Dai 
+    address DAIAddress = 0x6B175474E89094C44Da98b954EedeAC495271d0F; // Mainnet
 
-    // this is weth
-    address SANDAddress = 0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa; // Mumbai
+    // Sand 
+    address SANDAddress = 0x3845badAde8e6dFF049820680d1F14bD3903a5d0; // Mainnet
 
-    address LINKAddress = 0x326C977E6efc84E512bB9C30f76E30c160eD06FB; //Mumbai
+    address LINKAddress = 0x514910771AF9Ca656af840dff83E8264EcF986CA; // Mainnet
 
-    address routerSushiswap = 0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506; // Sushiswap router on Mumbai
-    address routerQuickswap = 0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506; // Quickswap router on Polygon
+    address routerSushiswap = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F	; // Sushiswap router on Mainnet
+    address routerQuickswap = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F	; // using sushiswap for the moment 
 
     constructor() {
         Quickswap = IUniswapV2Router02(routerQuickswap);
