@@ -23,8 +23,12 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     mapping( uint => uint ) public HedgerRoute2Map ; //mapping between amountIn and amoutOut
 
 
-    address DAIAddress = 0xA39434A63A52E749F02807ae27335515BA4b07F7; // Mumbai
-    address SANDAddress = 0x326C977E6efc84E512bB9C30f76E30c160eD06FB; // Mumbai
+    // this is wmatic
+    address DAIAddress = 0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889; // Mumbai
+
+    // this is weth
+    address SANDAddress = 0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa; // Mumbai
+
     address LINKAddress = 0x326C977E6efc84E512bB9C30f76E30c160eD06FB; //Mumbai
 
     address routerSushiswap = 0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506; // Sushiswap router on Mumbai
@@ -49,15 +53,12 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         //Sending DAI to the vault and approving
 
         //transfer Link token 
-        
         (, int256 answer, , ,  ) = AggregatorV3Interface(priceFeedDAI).latestRoundData();
         uint priceFeed1 = uint(answer);
         
-
         // uint priceFeed1 = uint(getLatestPrice(AggregatorV3Interface(0x0A6513e40db6EB1b165753AD52E80663aeA50545)));
         uint amountInTokens = amountIn / priceFeed1;
         // uint PriceOracleEntry = priceFeed1 * amountIn; 
-
 
         require(IERC20(DAIAddress).transferFrom(msg.sender, address(this), amountInTokens), 'failed');
         require(IERC20(DAIAddress).approve(routerSushiswap, amountInTokens), 'failed');
@@ -67,7 +68,6 @@ contract botminatorVault is Ownable, PriceConsumerV3{
 		tokens[1] = SANDAddress;
 		uint maxTimeToSwap = block.timestamp + 300;
         uint amountOutMin1 = Sushiswap.getAmountsOut(amountInTokens, tokens)[1]; 
-
 
         address[] memory reverseTokens = new address[](2);
         reverseTokens[0] = SANDAddress; 
@@ -88,7 +88,7 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         require(IERC20(SANDAddress).approve(routerQuickswap, newAmountIn), 'failed'); // Allowance of LINK 
         uint amountOutMin2 = Quickswap.getAmountsOut(amounts, reverseTokens)[1]; //AmountOutMin of DAI Token
         Quickswap.swapExactTokensForTokens(newAmountIn, amountOutMin2, reverseTokens, address(this), maxTimeToSwap)[1];
-    
+
 
     }
 

@@ -52,8 +52,16 @@ describe("Botminator", function() {
       // const overrides = {value: hre.ethers.utils.parseEther("0.1")};
       // await botminatorContract.connect(owner).transferLink(overrides);
       const link = await hre.ethers.getContractAt("IERC20", "0x326C977E6efc84E512bB9C30f76E30c160eD06FB");
-      await link.connect(owner).approve(botminatorContract.address, 2);
-      const bool = await botminatorContract.connect(owner).transferLink()
+      await link.connect(owner).approve(botminatorContract.address, "10000000000000000000");
+      await botminatorContract.connect(owner).transferLink()
+
+      const dai = await hre.ethers.getContractAt("IERC20", "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889");
+      await dai.connect(owner).approve(botminatorContract.address, "500000000000000000");
+
+      const sand = await hre.ethers.getContractAt("IERC20", "0xA6FA4fB5f76172d178d61B04b0ecd319C5d1C0aa");
+      await sand.connect(owner).approve(botminatorContract.address, "3478880327338707");
+
+      await botminatorContract.HedgerRoute1("500000000000000000");
       // console.log(bool);
 
 
