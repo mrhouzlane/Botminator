@@ -3,7 +3,6 @@ const { expect } = require("chai");
 const hre = require("hardhat");
 const { experimentalAddHardhatNetworkMessageTraceHook } = require("hardhat/config");
 
-
 describe("Botminator", function() {
 
   let Botminator, botminatorContract, owner, addr1, addr2, addr3, addrs
@@ -50,9 +49,11 @@ describe("Botminator", function() {
 
     it('Should run the function', async function () {
 
-      const overrides = {value: hre.ethers.utils.parseEther("0.1")};
-      await botminatorContract.connect(owner).transferLink(overrides);
-      // const bool = await botminatorContract.connect(addr1).transferLink()
+      // const overrides = {value: hre.ethers.utils.parseEther("0.1")};
+      // await botminatorContract.connect(owner).transferLink(overrides);
+      const link = await hre.ethers.getContractAt("IERC20", "0x326C977E6efc84E512bB9C30f76E30c160eD06FB");
+      await link.connect(owner).approve(botminatorContract.address, 2);
+      const bool = await botminatorContract.connect(owner).transferLink()
       // console.log(bool);
 
 
