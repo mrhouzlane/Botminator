@@ -2,7 +2,8 @@
 
 🪢🪢 This is the official repository for Chainlink Hackathon with Encode Club 2022 🪢🪢
 
-Botminator is a trading cross exchange bot arbitrage based on Proof Of Variation - using Chainlink PriceeFeed Oracle - and acting the Hedge with Chainlink Keepers. 
+You cannot be a real market maker in markets like NYSE, controlled by capital ventures (private clubs). Motivation to build a bot comes with this incentive offered by decentralized exchanges offering direct access to the market with APIs for example.
+Botminator is an arbitrage bot taking advantage of chainlink price feed oracle and chainlink keepers for cross exchange trading based on Proof Of Variation. 
 
 
 ### Technical Paper 
