@@ -49,18 +49,48 @@ describe("Botminator", function() {
 
     it('Should run the function', async function () {
 
+      /*
+       * @dev: contract addresses used in contract
+       */
+      const routerSushiswap = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
+      const WETHAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"; // Mainnet
+      const DAIAddress = "0x6B175474E89094C44Da98b954EedeAC495271d0F"; // Mainnet
+      const SANDAddress = "0x3845badAde8e6dFF049820680d1F14bD3903a5d0"; // Mainnet
+      const LINKAddress = "0x514910771AF9Ca656af840dff83E8264EcF986CA"; // Mainnet
+      const dai = await hre.ethers.getContractAt("IERC20", DAIAddress);
+      const sand = await hre.ethers.getContractAt("IERC20", SANDAddress);
+      const link = await hre.ethers.getContractAt("IERC20", LINKAddress);
+
+      /*
+       * @dev: convert 0.1 ETH to each token for testing
+       */      
+      const validDeadLine = "999999999999"
+      const etherAmountIn = hre.ethers.utils.parseEther("1")
+      const sushi = await hre.ethers.getContractAt("IUniswapV2Router02", routerSushiswap);
+      const [,daiAmountOut] = await sushi.getAmountsOut(etherAmountIn, [WETHAddress, DAIAddress])
+      const [,sandAmountOut] = await sushi.getAmountsOut(etherAmountIn, [WETHAddress, SANDAddress])
+      const [,linkAmountOut] = await sushi.getAmountsOut(etherAmountIn, [WETHAddress, LINKAddress])
+
+      await sushi.swapExactETHForTokens(daiAmountOut, [WETHAddress, DAIAddress], owner.address, validDeadLine, {value: etherAmountIn})
+      await sushi.swapExactETHForTokens(sandAmountOut, [WETHAddress, SANDAddress], owner.address, validDeadLine, {value: etherAmountIn})
+      await sushi.swapExactETHForTokens(linkAmountOut, [WETHAddress, LINKAddress], owner.address, validDeadLine, {value: etherAmountIn})
+      await dai.approve(botminatorContract.address, daiAmountOut);
+      await sand.approve(botminatorContract.address, sandAmountOut);
+      await link.approve(botminatorContract.address, linkAmountOut);
+      await botminatorContract.HedgerRoute1(daiAmountOut);
+ 
+
       // const overrides = {value: hre.ethers.utils.parseEther("0.1")};
       // await botminatorContract.connect(owner).transferLink(overrides);
-      const link = await hre.ethers.getContractAt("IERC20", "0x514910771AF9Ca656af840dff83E8264EcF986CA");
-      const whaleAddress = "0x7B0419581Eb2e34B4D3Bfc1689f1Bd855d364d9D";
-      await network.provider.request({
-        method: "hardhat_impersonateAccount",
-        params: [whaleAddress],
-      });
-      const whale = await hre.ethers.getSigner(whaleAddress);
-      await link.connect(whale).transfer("0x4593ed9CbE6003e687e5e77368534bb04b162503", hre.ethers.utils.parseEther("100"));
-      await link.connect().approve(botminatorContract.address, "10000000000000000000");
-      await botminatorContract.connect(owner).transferLink()
+      // const whaleAddress = "0x7B0419581Eb2e34B4D3Bfc1689f1Bd855d364d9D";
+      // await network.provider.request({
+      //   method: "hardhat_impersonateAccount",
+      //   params: [whaleAddress],
+      // });
+      // const whale = await hre.ethers.getSigner(whaleAddress);
+      // await link.connect(whale).transfer("0x4593ed9CbE6003e687e5e77368534bb04b162503", hre.ethers.utils.parseEther("100"));
+      // await link.connect().approve(botminatorContract.address, "10000000000000000000");
+      // await botminatorContract.connect(owner).transferLink()
 
       // const dai = await hre.ethers.getContractAt("IERC20", "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889");
       // await dai.connect(owner).approve(botminatorContract.address, "500000000000000000");
