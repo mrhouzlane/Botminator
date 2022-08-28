@@ -10,7 +10,7 @@ This is a trading bot doing swaps in Sushiswap / Quickswap basing it's profitabi
 
 The logic is the following, we are trading USDT for SAND using Sushiswap then SAND for USDT using Quickswap : 
 
-![PoPV](./docs/PoPVOK.png)
+![PoPV](./docs/PoV.png)
 
  
  - So to be profitable you must have :  ``` amounts - x = (amountIn * priceFeed(USDT)) / (priceFeed(SAND)) ``` 
