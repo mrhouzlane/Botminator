@@ -4,6 +4,11 @@
 
 Botminator is a trading cross exchange bot arbitrage based on Proof Of Variation - using Chainlink PriceeFeed Oracle - and acting the Hedge with Chainlink Keepers. 
 
+### Technical Paper 
+
+![TechnicalPaper](./docs/"TO BE DONE".png)
+
+
 ### How it works 
 
 ![PoPV](./docs/PoV.png)
