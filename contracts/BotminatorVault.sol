@@ -31,8 +31,8 @@ contract botminatorVault is Ownable, PriceConsumerV3{
 
     address LINKAddress = 0x514910771AF9Ca656af840dff83E8264EcF986CA; // Mainnet
 
-    address routerSushiswap = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F	; // Sushiswap router on Mainnet
-    address routerQuickswap = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F	; // using sushiswap for the moment 
+    address routerSushiswap = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D	; // Sushiswap router on Mainnet
+    address routerQuickswap = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D	; // using sushiswap for the moment 
 
     constructor() {
         Quickswap = IUniswapV2Router02(routerQuickswap);
@@ -55,7 +55,7 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         //transfer Link token 
         (, int256 answer, , ,  ) = AggregatorV3Interface(priceFeedDAI).latestRoundData();
         uint priceFeed1 = uint(answer);
-        
+
         // uint priceFeed1 = uint(getLatestPrice(AggregatorV3Interface(0x0A6513e40db6EB1b165753AD52E80663aeA50545)));
         uint amountInTokens = amountIn / priceFeed1;
         // uint PriceOracleEntry = priceFeed1 * amountIn; 
@@ -83,12 +83,10 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         uint priceFeed2 = uint(getLatestPrice(priceFeedSAND));
         uint newAmountIn = amounts - ((amountInTokens * priceFeed1)/priceFeed2);
 
-        //DO SECOND SWAP 
         require(IERC20(SANDAddress).transferFrom(msg.sender, address(this), newAmountIn), 'failed');
         require(IERC20(SANDAddress).approve(routerQuickswap, newAmountIn), 'failed'); // Allowance of LINK 
         uint amountOutMin2 = Quickswap.getAmountsOut(amounts, reverseTokens)[1]; //AmountOutMin of DAI Token
         Quickswap.swapExactTokensForTokens(newAmountIn, amountOutMin2, reverseTokens, address(this), maxTimeToSwap)[1];
-
 
     }
 
