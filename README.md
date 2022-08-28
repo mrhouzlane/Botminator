@@ -32,30 +32,23 @@ It is important to choose the right dex or in other words the route to be profit
 - Oracle exchange price feed choice : not necessarily the connected exchange <depends on strategy : more liquid exchange will give you more insight into the potential direction of token price> 
 
 
-
-
-
 ### Analysis Tools 
 
-[DeFi Tool](https://defillama.com/)
+[Analysis tool for dexs](https://defillama.com/)
 
 
-### CHAINLINK KEEPERS 
+### Chainlink Integration 
 
- Triggers automated trading strategy by :
- 
-- Managing [open-close] orders / computation using off-chain computation with Chainlink Keepers. 
-- Adding gas price conditions to meet the checkUpkeep conditions to true only if gasLimit  is lower than x value 
-- ...
-- ...
+- PriceFeed 
+- Keepers 
 
-### Why ?
+### Advantages 
 
 - Chainlink Keepers can execute a portion of the code deployed on-chain at a basic minimum web dev costs. 
 - Distinct service that only compute code for that contract on-chain. 
 - Save Ethereum fees. 
 - Privacy 
 
-### Future : 
+### Future 
 
 
