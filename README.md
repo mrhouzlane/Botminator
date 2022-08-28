@@ -1,42 +1,41 @@
-## BOTMINATOR 
+## Botminator 
 
 🪢🪢 This is the official repository for Chainlink Hackathon with Encode Club 2022 🪢🪢
 
-This is a trading bot doing swaps in Sushiswap / Quickswap basing it's profitability on difference between the Price returned by the Oracle for the ```amountIn``` and the Price returned by the Oracle for the ```amountOut```.
-**REMINDER**  THIS IS NOT A FLASHSWAP BUT TRADING LOGIC BASED ON ORACLE PRICING -- YOU DO YOU, WE ARE NOT RESPONSIBLE FOR ANY LOSSES -- 
+Botminator is a trading cross exchange bot arbitrage based on Proof Of Variation - using Chainlink PriceeFeed Oracle - and acting the Hedge with Chainlink Keepers. 
 
-
-### Proof of Price Variation : PoPV
-
-The logic is the following, we are trading USDT for SAND using Sushiswap then SAND for USDT using Quickswap : 
+### How it works 
 
 ![PoPV](./docs/PoV.png)
 
+
+- SAND : Output in token amount after swap.  
+- SAND* : Input in token amount to swap in the 2nd swap of a route based on Input in USD to be profitable. 
+
  
- - So to be profitable you must have :  ``` amounts - x = (amountIn * priceFeed(USDT)) / (priceFeed(SAND)) ``` 
- 
- --->  where [amounts - x]  is the number of SAND tokens minimum to swap to be profitable when using Quickswap after the first swap.
- 
-### Strategy : 
+### Inspiration 
+
+To reduce the risk of having a sandwich attack AMM DEXs began offering Time Weighted Average Price (TWAP) oracles. TWAP is a pricing methodology that calculates the mean price of an asset during a specified period of time. For example, a “one-hour TWAP” means taking the average price over a defined hour of time. 
+
 
 Cross-exchange market making :
+
 - Less liquid market : make order 
 - More Liquid market : taker order 
 
 
-### Strategy to choose the "right" DEX : 
+### Strategy 
+
+It is important to choose the right dex or in other words the route to be profitable, and for this you have to : 
 
 - Take into account the tax(fees) in the arbitrage while setting up orders. 
 - Oracle exchange price feed choice : not necessarily the connected exchange <depends on strategy : more liquid exchange will give you more insight into the potential direction of token price> 
 
-We have choose two dexes : Uniswap & QuickSwap :
-
-The aim here is to create a bot arbitrage with swaps that can reduce the risk of having a sandwich attack to increase the profitability % with: 
-
-- Uniswap V2-Core : adding Chainlink oracle PriceFeed to get prices before / after swap with Uniswap || QuickSwap. 
 
 
-### Analysis Tools : 
+
+
+### Analysis Tools 
 
 [DeFi Tool](https://defillama.com/)
 
