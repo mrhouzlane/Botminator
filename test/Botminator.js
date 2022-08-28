@@ -67,18 +67,37 @@ describe("Botminator", function() {
       const validDeadLine = "999999999999"
       const etherAmountIn = hre.ethers.utils.parseEther("1")
       const sushi = await hre.ethers.getContractAt("IUniswapV2Router02", routerSushiswap);
-      const daiAmountOut = (await sushi.getAmountsOut(etherAmountIn, [WETHAddress, DAIAddress]))
-      const sandAmountOut = (await sushi.getAmountsOut(etherAmountIn, [WETHAddress, SANDAddress]))
-      const linkAmountOut = (await sushi.getAmountsOut(etherAmountIn, [WETHAddress, LINKAddress]))
+      const daiAmountOut = (await sushi.getAmountsOut(etherAmountIn, [WETHAddress, DAIAddress]))[1]
+      const sandAmountOut = (await sushi.getAmountsOut(etherAmountIn, [WETHAddress, SANDAddress]))[1]
+      const linkAmountOut = (await sushi.getAmountsOut(etherAmountIn, [WETHAddress, LINKAddress]))[1]
 
 
       await sushi.swapExactETHForTokens(daiAmountOut, [WETHAddress, DAIAddress], owner.address, validDeadLine, {value: etherAmountIn})
       await sushi.swapExactETHForTokens(sandAmountOut, [WETHAddress, SANDAddress], owner.address, validDeadLine, {value: etherAmountIn})
       const tx = await sushi.swapExactETHForTokens(linkAmountOut, [WETHAddress, LINKAddress], owner.address, validDeadLine, {value: etherAmountIn})
-      console.log(tx);
-      await dai.approve(botminatorContract.address, daiAmountOut);
+      // console.log(tx);
       await sand.approve(botminatorContract.address, sandAmountOut);
       await link.approve(botminatorContract.address, linkAmountOut);
+
+      /*
+       * @dev: transfer SAND to contract
+       */  
+      const deadline = "999999999999"
+      const amountIn = 2;
+      const SANDOut = (await sushi.getAmountsOut(amountIn, [SANDAddress, DAIAddress]))[1]
+      const whaleAddress = "0x90851375E3Bf3065071279bE6cC147F6F456c261";
+      await network.provider.request({
+          method: "hardhat_impersonateAccount",
+          params: [whaleAddress],
+        });
+      const overrides = hre.ethers.utils.parseEther("0.01"); 
+      console.log(overrides);
+      const whale = await hre.ethers.getSigner(whaleAddress);
+      await sand.approve(botminatorContract.address, sandAmountOut);
+      await sand.connect(whale).transfer(botminatorContract.address, hre.ethers.utils.parseEther("100"));
+      // await sand.approve(botminatorContract.address, sandAmountOut);
+      // await sushi.swapExactTokensForTokens(amountIn, SANDOut, [SANDAddress, DAIAddress], owner.address, deadline)
+
       // await botminatorContract.HedgerRoute1(daiAmountOut);
  
 
