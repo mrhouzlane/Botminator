@@ -8,7 +8,6 @@ Botminator is an arbitrage bot taking advantage of chainlink price feed oracle a
 
 ### Technical Paper 
 
-![TechnicalPaper](./docs/"TO BE DONE".png)
 
 
 ### How it works 
