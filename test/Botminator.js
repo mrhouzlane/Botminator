@@ -67,17 +67,19 @@ describe("Botminator", function() {
       const validDeadLine = "999999999999"
       const etherAmountIn = hre.ethers.utils.parseEther("1")
       const sushi = await hre.ethers.getContractAt("IUniswapV2Router02", routerSushiswap);
-      const [,daiAmountOut] = await sushi.getAmountsOut(etherAmountIn, [WETHAddress, DAIAddress])
-      const [,sandAmountOut] = await sushi.getAmountsOut(etherAmountIn, [WETHAddress, SANDAddress])
-      const [,linkAmountOut] = await sushi.getAmountsOut(etherAmountIn, [WETHAddress, LINKAddress])
+      const daiAmountOut = (await sushi.getAmountsOut(etherAmountIn, [WETHAddress, DAIAddress]))
+      const sandAmountOut = (await sushi.getAmountsOut(etherAmountIn, [WETHAddress, SANDAddress]))
+      const linkAmountOut = (await sushi.getAmountsOut(etherAmountIn, [WETHAddress, LINKAddress]))
+
 
       await sushi.swapExactETHForTokens(daiAmountOut, [WETHAddress, DAIAddress], owner.address, validDeadLine, {value: etherAmountIn})
       await sushi.swapExactETHForTokens(sandAmountOut, [WETHAddress, SANDAddress], owner.address, validDeadLine, {value: etherAmountIn})
-      await sushi.swapExactETHForTokens(linkAmountOut, [WETHAddress, LINKAddress], owner.address, validDeadLine, {value: etherAmountIn})
+      const tx = await sushi.swapExactETHForTokens(linkAmountOut, [WETHAddress, LINKAddress], owner.address, validDeadLine, {value: etherAmountIn})
+      console.log(tx);
       await dai.approve(botminatorContract.address, daiAmountOut);
       await sand.approve(botminatorContract.address, sandAmountOut);
       await link.approve(botminatorContract.address, linkAmountOut);
-      await botminatorContract.HedgerRoute1(daiAmountOut);
+      // await botminatorContract.HedgerRoute1(daiAmountOut);
  
 
       // const overrides = {value: hre.ethers.utils.parseEther("0.1")};
