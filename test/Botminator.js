@@ -3,7 +3,7 @@ const { expect } = require("chai");
 const hre = require("hardhat");
 const { experimentalAddHardhatNetworkMessageTraceHook } = require("hardhat/config");
 
-describe("Botminator", function() {
+describe("Botminator1", function() {
 
   let Botminator, botminatorContract, owner, addr1, addr2, addr3, addrs
   beforeEach(async function () {
@@ -12,6 +12,18 @@ describe("Botminator", function() {
     // const router='0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'; 
     botminatorContract = await Botminator.deploy()
     console.log("deployed to :", botminatorContract.address)
+  });
+
+
+
+  it('do the math conversion for getPriceRate', async function () {
+    //example for 50$ : 
+    const usd = 50 * (10**18) 
+    const sand = 927900000000000000
+    const result= usd / sand 
+    console.log(result) 
+    // OK 
+
   });
 
  
@@ -51,13 +63,17 @@ describe("Botminator", function() {
 
       /*
        * @dev: contract addresses used in contract
-       */
-      const routerSushiswap = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D"
-      const WETHAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"; // Mainnet
-      const DAIAddress = "0x6B175474E89094C44Da98b954EedeAC495271d0F"; // Mainnet
-      const SANDAddress = "0x3845badAde8e6dFF049820680d1F14bD3903a5d0"; // Mainnet
-      const LINKAddress = "0x514910771AF9Ca656af840dff83E8264EcF986CA"; // Mainnet
-      const dai = await hre.ethers.getContractAt("IERC20", DAIAddress);
+       */ 
+
+    
+      const routerSushiswap = "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506"; // POLYGON
+      const routerQuickswap = "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32"; // POLYGON
+      const WETHAddress = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"; // POLYGON
+      const Thether = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F"; //POLYGON
+      const SANDAddress = "0xC6d54D2f624bc83815b49d9c2203b1330B841cA0"; //POLYGON
+      const LINKAddress = "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39"; //POLYGON
+      const dai = await hre.ethers.getContractAt("IERC20", Thether );
+      console.log(dai);
       const sand = await hre.ethers.getContractAt("IERC20", SANDAddress);
       const link = await hre.ethers.getContractAt("IERC20", LINKAddress);
 
@@ -78,31 +94,14 @@ describe("Botminator", function() {
       // console.log(tx);
       await sand.approve(botminatorContract.address, sandAmountOut);
       await link.approve(botminatorContract.address, linkAmountOut);
-
-      /*
-       * @dev: transfer SAND to contract
-       */  
-      const deadline = "999999999999"
-      const amountIn = 2;
-      const SANDOut = (await sushi.getAmountsOut(amountIn, [SANDAddress, DAIAddress]))[1]
-      const whaleAddress = "0x90851375E3Bf3065071279bE6cC147F6F456c261";
-      await network.provider.request({
-          method: "hardhat_impersonateAccount",
-          params: [whaleAddress],
-        });
-      const overrides = hre.ethers.utils.parseEther("0.01"); 
-      console.log(overrides);
-      const whale = await hre.ethers.getSigner(whaleAddress);
-      await sand.approve(botminatorContract.address, sandAmountOut);
-      await sand.connect(whale).transfer(botminatorContract.address, hre.ethers.utils.parseEther("100"));
-      // await sand.approve(botminatorContract.address, sandAmountOut);
+      await dai.approve(botminatorContract.address, daiAmountOut);
       // await sushi.swapExactTokensForTokens(amountIn, SANDOut, [SANDAddress, DAIAddress], owner.address, deadline)
 
-      // await botminatorContract.HedgerRoute1(daiAmountOut);
+      await botminatorContract.HedgerRoute1(daiAmountOut);
  
 
-      // const overrides = {value: hre.ethers.utils.parseEther("0.1")};
-      // await botminatorContract.connect(owner).transferLink(overrides);
+      const overrides = {value: hre.ethers.utils.parseEther("0.1")};
+      await botminatorContract.connect(owner).transferLink(overrides);
       // const whaleAddress = "0x7B0419581Eb2e34B4D3Bfc1689f1Bd855d364d9D";
       // await network.provider.request({
       //   method: "hardhat_impersonateAccount",
@@ -120,7 +119,7 @@ describe("Botminator", function() {
       // await sand.connect(owner).approve(botminatorContract.address, "3478880327338707");
 
       // await botminatorContract.HedgerRoute1("500000000000000000");
-      // // console.log(bool);
+      // console.log(bool);
 
 
 

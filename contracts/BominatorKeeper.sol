@@ -17,12 +17,12 @@ contract BominatorKeeper is KeeperCompatibleInterface{
   
 
     constructor(
-       bytes32 _config, // optional
+    //    bytes32 _config, // optional
        address _vault0
     ) {
         owner = msg.sender;
         vaultAddr = _vault0;
-        config = _config;
+        // config = _config;
     }
 
     function setConfig(bytes32 _config) external {

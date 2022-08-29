@@ -24,14 +24,23 @@ contract PriceConsumerV3 {
     /**
      * Returns the latest price
      */
-    function getLatestPrice(AggregatorV3Interface _priceFeed) public view returns (int) {
-        (
-            /*uint80 roundID*/,
-            int price,
-            /*uint startedAt*/,
-            /*uint timeStamp*/,
-            /*uint80 answeredInRound*/
-        ) = _priceFeed.latestRoundData();
-        return price; // 
+    function getPriceRate(AggregatorV3Interface priceFeed, uint _amount) public view returns (uint) {
+        (, int price,,,) = priceFeed.latestRoundData();
+        uint adjust_price = uint(price) * 1e10;
+        uint usd = _amount * 1e18;
+        uint rate = (usd * 1e18) / adjust_price;
+        return rate;
     }
+    
+    // example for 50$ : 
+    // usd = 50 * (10**18) 
+    // sand = 927900000000000000
+    // result= usd / sand 
+    // print(result) 
+    // 
+
+
+
+
+
 }

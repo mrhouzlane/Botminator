@@ -36,17 +36,17 @@ module.exports = {
     gasPrice: 21
   },
   networks: {
-    hardhat: {
-      forking: {
-        url,
-        // blockNumber: 27799481
-      },
-    },
-    // mumbai: {
-    //   chainId : 80001,
-    //   url,
-    //   accounts
-    // }
+    // hardhat: {
+    //   forking: {
+    //     url,
+    //     // blockNumber: 27799481
+    //   },
+    // },
+    polygon: {
+      chainId : 80001,
+      url,
+      accounts
+    }
   }
 
 }

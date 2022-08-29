@@ -23,26 +23,21 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     mapping( uint => uint ) public HedgerRoute2Map ; //mapping between amountIn and amoutOut
 
 
-    // Dai 
-    address DAIAddress = 0x6B175474E89094C44Da98b954EedeAC495271d0F; // Mainnet
-
-    // Sand 
-    address SANDAddress = 0x3845badAde8e6dFF049820680d1F14bD3903a5d0; // Mainnet
-
-    address LINKAddress = 0x514910771AF9Ca656af840dff83E8264EcF986CA; // Mainnet
-
-    address routerSushiswap = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D	; // Sushiswap router on Mainnet
-    address routerQuickswap = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D	; // using sushiswap for the moment 
+    address DAIAddress = 0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063; // Polygon
+    address SANDAddress = 0xC6d54D2f624bc83815b49d9c2203b1330B841cA0; // Polygon
+    address LINKAddress = 0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39; // Polygon
+    address routerSushiswap = 0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506		; // Polygon
+    address routerQuickswap = 0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32	; // Polygon 
 
     constructor() {
         Quickswap = IUniswapV2Router02(routerQuickswap);
         Sushiswap = IUniswapV2Router02(routerSushiswap);
     }
 
-    function transferLink() external payable {
-        require(msg.value <= 0.1 ether);
-        IERC20(LINKAddress).transferFrom(msg.sender, address(this), 2);
-    }
+    // function transferLink() external payable {
+    //     require(msg.value <= 0.1 ether);
+    //     IERC20(LINKAddress).transferFrom(msg.sender, address(this), 2);
+    // }
 
 
     ///@notice getting liquidity from illiquid market and selling in liquid market
@@ -50,15 +45,9 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     function HedgerRoute1(uint256 amountIn) external payable {
 
         // DAI--> SAND         -------- Sushiswap --------- 
-        //Sending DAI to the vault and approving
 
-        //transfer Link token 
-        (, int256 answer, , ,  ) = AggregatorV3Interface(priceFeedDAI).latestRoundData();
-        uint priceFeed1 = uint(answer);
-
-        // uint priceFeed1 = uint(getLatestPrice(AggregatorV3Interface(0x0A6513e40db6EB1b165753AD52E80663aeA50545)));
-        uint amountInTokens = amountIn / priceFeed1;
-        // uint PriceOracleEntry = priceFeed1 * amountIn; 
+        //how much DAI we have with amountIn USD
+        uint amountInTokens = uint(getPriceRate(priceFeedDAI, amountIn));
 
         require(IERC20(DAIAddress).transferFrom(msg.sender, address(this), amountInTokens), 'failed');
         require(IERC20(DAIAddress).approve(routerSushiswap, amountInTokens), 'failed');
@@ -79,14 +68,11 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         require(amounts > 0, "Transaction aborted");
 
         //Reverse Swap : SAND --> DAI       ------ Quickswap ------ 
-        //Calcul of new input token based on last price of Output Token :
-        uint priceFeed2 = uint(getLatestPrice(priceFeedSAND));
-        uint newAmountIn = amounts - ((amountInTokens * priceFeed1)/priceFeed2);
 
-        require(IERC20(SANDAddress).transferFrom(msg.sender, address(this), newAmountIn), 'failed');
-        require(IERC20(SANDAddress).approve(routerQuickswap, newAmountIn), 'failed'); // Allowance of LINK 
+        require(IERC20(SANDAddress).transferFrom(msg.sender, address(this), amounts), 'failed');
+        require(IERC20(SANDAddress).approve(routerQuickswap, amounts), 'failed'); // Allowance of LINK 
         uint amountOutMin2 = Quickswap.getAmountsOut(amounts, reverseTokens)[1]; //AmountOutMin of DAI Token
-        Quickswap.swapExactTokensForTokens(newAmountIn, amountOutMin2, reverseTokens, address(this), maxTimeToSwap)[1];
+        Quickswap.swapExactTokensForTokens(amounts, amountOutMin2, reverseTokens, address(this), maxTimeToSwap)[1];
 
     }
 
@@ -95,17 +81,16 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     ///@dev amountIn is the amount in dollars that you want to spend 
     function HedgerRoute2(uint256 amountIn) public {
 
-        // DAI--> SAND         -------- Quickswap --------- 
-        //Sending DAI to the vault and approving 
-        uint priceFeed1 = uint(getLatestPrice(priceFeedDAI));
-        uint amountInTokens = amountIn / priceFeed1;
-        // uint PriceOracleEntry = priceFeed1 * amountIn;  
+        
+        // DAI--> SAND         -------- QUICKSWAP --------- 
+
+        //how much DAI we have with amountIn USD
+        uint amountInTokens = uint(getPriceRate(priceFeedDAI, amountIn));
 
         require(IERC20(DAIAddress).transferFrom(msg.sender, address(this), amountInTokens), 'failed');
-        require(IERC20(DAIAddress).approve(routerQuickswap, amountInTokens), 'failed');
+        require(IERC20(DAIAddress).approve(routerSushiswap, amountInTokens), 'failed');
 
-        
-        address[] memory tokens = new address[](2);
+		address[] memory tokens = new address[](2);
 		tokens[0] = DAIAddress;
 		tokens[1] = SANDAddress;
 		uint maxTimeToSwap = block.timestamp + 300;
@@ -115,27 +100,22 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         reverseTokens[0] = SANDAddress; 
         reverseTokens[1] = DAIAddress;
 
-		
         // ------ SWAP CAN START NOW --------------------
+
 		uint amounts = Quickswap.swapExactTokensForTokens(amountInTokens, amountOutMin1, tokens, address(this), maxTimeToSwap)[1]; 
         require(amounts > 0, "Transaction aborted");
 
-        //Reverse Swap : SAND --> DAI       ------ Sushiswap ------ 
-        //Calcul of new input token based on last price of Output Token :
-        uint priceFeed2 = uint(getLatestPrice(priceFeedSAND));
-        uint newAmountIn = amounts - ((amountInTokens * priceFeed1)/priceFeed2);
+        //Reverse Swap : SAND --> DAI       ------ SUSHISWAP ------ 
 
-        //DO SECOND SWAP 
-        require(IERC20(SANDAddress).transferFrom(msg.sender, address(this), newAmountIn), 'failed');
-        require(IERC20(SANDAddress).approve(routerSushiswap, newAmountIn), 'failed'); // Allowance of LINK 
-       
+        require(IERC20(SANDAddress).transferFrom(msg.sender, address(this), amounts), 'failed');
+        require(IERC20(SANDAddress).approve(routerSushiswap, amounts), 'failed'); // Allowance of LINK 
         uint amountOutMin2 = Sushiswap.getAmountsOut(amounts, reverseTokens)[1]; //AmountOutMin of DAI Token
-        Sushiswap.swapExactTokensForTokens(newAmountIn, amountOutMin2, reverseTokens, address(this), maxTimeToSwap)[1];
+        Sushiswap.swapExactTokensForTokens(amounts, amountOutMin2, reverseTokens, address(this), maxTimeToSwap)[1];
 
     
     }
 
-    function predictSwapOracleRoute1(uint numberOfTokenIn) external returns (bool) {
+    function predictSwapOracleRoute1(uint numberOfTokenIn, uint amountIn) external returns (bool) {
 
         // setup of tokens 
         address[] memory tokens = new address[](2);
@@ -150,9 +130,9 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         uint expectedOutMin2 = Quickswap.getAmountsOut(amountOutMin1, reverseTokens)[1]; //prediction nbr tokens after 2nd swap 
 
         // Oracle use to predict the $ we get at the end of 2 swaps
-        uint priceFeed1 = uint(getLatestPrice(priceFeedDAI));
+        uint priceFeed1 = uint(getPriceRate(priceFeedDAI, amountIn));
         uint PriceOracleEntry = priceFeed1 * numberOfTokenIn;  
-        uint priceFeedLast = uint(getLatestPrice(priceFeedDAI));
+        uint priceFeedLast = uint(getPriceRate(priceFeedDAI, amountIn));
         uint expectedPriceOracleExit = priceFeedLast * expectedOutMin2; 
         
         HedgerRoute1Map[PriceOracleEntry] = expectedPriceOracleExit;
@@ -164,7 +144,7 @@ contract botminatorVault is Ownable, PriceConsumerV3{
     }
 
 
-    function predictSwapOracleRoute2(uint numberOfTokenIn) external returns (bool) {
+    function predictSwapOracleRoute2(uint numberOfTokenIn, uint amountIn) external returns (bool) {
 
         // setup of tokens 
         address[] memory tokens = new address[](2);
@@ -179,9 +159,9 @@ contract botminatorVault is Ownable, PriceConsumerV3{
         uint expectedOutMin2 = Sushiswap.getAmountsOut(amountOutMin1, reverseTokens)[1]; //prediction nbr tokens after 2nd swap 
 
         // Oracle use to predict the $ we get at the end of 2 swaps
-        uint priceFeed1 = uint(getLatestPrice(priceFeedDAI));
+        uint priceFeed1 = uint(getPriceRate(priceFeedDAI, amountIn));
         uint PriceOracleEntry = priceFeed1 * numberOfTokenIn;  
-        uint priceFeedLast = uint(getLatestPrice(priceFeedDAI));
+        uint priceFeedLast = uint(getPriceRate(priceFeedDAI, amountIn));
         uint expectedPriceOracleExit = priceFeedLast * expectedOutMin2; 
 
         HedgerRoute2Map[PriceOracleEntry] = expectedPriceOracleExit;
