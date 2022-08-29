@@ -42,7 +42,7 @@ module.exports = {
     //     // blockNumber: 27799481
     //   },
     // },
-    polygon: {
+    mumbai: {
       chainId : 80001,
       url,
       accounts
