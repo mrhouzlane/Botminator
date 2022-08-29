@@ -1,4 +1,4 @@
-## Botminator                                    --- Proof of Price Variation ---- 
+## Botminator                 
 
 🪢🪢 This is the official repository for Chainlink Hackathon with Encode Club 2022 🪢🪢
 
@@ -12,7 +12,8 @@ Botminator is an arbitrage bot taking advantage of chainlink price feed oracle a
 - BotminatorKeeper deployed : [Mumbai  contract](https://mumbai.polygonscan.com/address/0x38e35ae9fb9E1d0228495CB66AD51B9B095D5f6A)
 
 
-### How it works 
+### How it works : Proof of Price Variation 
+
 
 ![PoPV](./docs/PoV.png)
 
